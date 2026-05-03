@@ -156,7 +156,7 @@ export default function ClotureMensuelle() {
                     <div className="p-4 bg-slate-900 text-white rounded-3xl"><Lock size={40} /></div>
                     <div>
                        <h2 className="text-3xl font-black text-slate-900">Scellage Définitif</h2>
-                       <p className="text-slate-500 font-medium">Verrouillage des journaux et signature Diamond Seal.</p>
+                       <p className="text-slate-500 font-medium">Verrouillage des journaux et signature DIAWDI Seal.</p>
                     </div>
                  </div>
                  <div className="p-10 bg-emerald-50 border border-emerald-100 rounded-[2.5rem] space-y-4 text-center">
@@ -186,7 +186,7 @@ export default function ClotureMensuelle() {
                <div className="space-y-6">
                   {[
                     { label: "Mois Fiscal", val: format(new Date(periode + '-01'), 'MMMM yyyy', { locale: fr }) },
-                    { label: "Opérateur", val: "ADMIN_DIAMOND" },
+                    { label: "Opérateur", val: "ADMIN_DIAWDI" },
                     { label: "Intégrité Blockchain", val: "CERTIFIED", color: "text-emerald-400" },
                   ].map((row, i) => (
                     <div key={i} className="flex justify-between items-center border-b border-white/5 pb-4">
@@ -211,3 +211,4 @@ export default function ClotureMensuelle() {
     </div>
   );
 }
+

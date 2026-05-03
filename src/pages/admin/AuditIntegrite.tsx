@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { useStore } from '../../store/useStore';
 import { ShieldCheck, ShieldAlert, Fingerprint, Lock, History, Search, Download } from 'lucide-react';
 import { format } from 'date-fns';
@@ -10,10 +10,10 @@ export default function AuditIntegrite() {
   const journals = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId);
   const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
 
-  // Vérification de l'intégrité de la chaîne
+  // VÃ©rification de l'intÃ©gritÃ© de la chaÃ®ne
   const auditResults = useMemo(() => {
     const results = lignesEcriture.map(l => {
-      // Re-calculer le hash pour vérifier s'il a changé
+      // Re-calculer le hash pour vÃ©rifier s'il a changÃ©
       const content = `${l.date}|${l.numeroPiece}|${l.compteGeneralId}|${l.debit}|${l.credit}|${l.libelle}`;
       let calculatedHash = 0;
       for (let i = 0; i < content.length; i++) {
@@ -41,9 +41,9 @@ export default function AuditIntegrite() {
         <div>
           <h1 className="text-2xl font-black text-slate-900 flex items-center tracking-tight">
             <ShieldCheck className="mr-3 text-emerald-600" />
-            DIAMOND SEAL : AUDIT D'INTÉGRITÉ
+            DIAWDI SEAL : AUDIT D'INTÃ‰GRITÃ‰
           </h1>
-          <p className="text-slate-500 text-sm">Contrôle de l'empreinte numérique et de l'inaltérabilité des écritures</p>
+          <p className="text-slate-500 text-sm">ContrÃ´le de l'empreinte numÃ©rique et de l'inaltÃ©rabilitÃ© des Ã©critures</p>
         </div>
         <div className="text-right">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Dernier Scan</p>
@@ -51,7 +51,7 @@ export default function AuditIntegrite() {
         </div>
       </div>
 
-      {/* Score d'Intégrité */}
+      {/* Score d'IntÃ©gritÃ© */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden flex">
         <div className={`w-1/3 p-8 flex flex-col items-center justify-center border-r border-slate-100 ${auditResults.integrityPercentage === 100 ? 'bg-emerald-50' : 'bg-rose-50'}`}>
           <div className="relative">
@@ -66,38 +66,38 @@ export default function AuditIntegrite() {
               <span className="text-3xl font-black text-slate-900">{Math.round(auditResults.integrityPercentage)}%</span>
             </div>
           </div>
-          <p className="mt-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Score d'Intégrité</p>
+          <p className="mt-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Score d'IntÃ©gritÃ©</p>
         </div>
         
         <div className="flex-1 p-8 grid grid-cols-2 gap-8">
           <div className="space-y-1">
-            <p className="text-xs text-slate-400 uppercase font-bold">Total Écritures Scannées</p>
+            <p className="text-xs text-slate-400 uppercase font-bold">Total Ã‰critures ScannÃ©es</p>
             <p className="text-3xl font-black text-slate-900">{auditResults.results.length}</p>
             <div className="flex items-center text-xs text-emerald-600 font-bold mt-2">
-              <Fingerprint size={12} className="mr-1" /> TOUTES LES EMPREINTES GÉNÉRÉES
+              <Fingerprint size={12} className="mr-1" /> TOUTES LES EMPREINTES GÃ‰NÃ‰RÃ‰ES
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-xs text-slate-400 uppercase font-bold">Anomalies Détectées</p>
+            <p className="text-xs text-slate-400 uppercase font-bold">Anomalies DÃ©tectÃ©es</p>
             <p className={`text-3xl font-black ${auditResults.anomalies.length > 0 ? 'text-rose-600' : 'text-slate-900'}`}>{auditResults.anomalies.length}</p>
             {auditResults.anomalies.length === 0 ? (
               <div className="flex items-center text-xs text-emerald-600 font-bold mt-2">
-                <Lock size={12} className="mr-1" /> AUCUNE ALTÉRATION DÉTECTÉE
+                <Lock size={12} className="mr-1" /> AUCUNE ALTÃ‰RATION DÃ‰TECTÃ‰E
               </div>
             ) : (
               <div className="flex items-center text-xs text-rose-600 font-bold mt-2">
-                <ShieldAlert size={12} className="mr-1" /> CHAÎNE D'INTÉGRITÉ COMPROMISE
+                <ShieldAlert size={12} className="mr-1" /> CHAÃŽNE D'INTÃ‰GRITÃ‰ COMPROMISE
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Liste des écritures et leurs signatures */}
+      {/* Liste des Ã©critures et leurs signatures */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden">
         <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
           <h3 className="font-black text-slate-800 text-sm tracking-tight flex items-center">
-            <History size={16} className="mr-2 text-indigo-600" /> REGISTRE DES EMPREINTES NUMÉRIQUES
+            <History size={16} className="mr-2 text-indigo-600" /> REGISTRE DES EMPREINTES NUMÃ‰RIQUES
           </h3>
           <div className="flex space-x-2">
             <div className="relative">
@@ -115,7 +115,7 @@ export default function AuditIntegrite() {
             <thead className="bg-slate-50/50">
               <tr>
                 <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">ID / Date</th>
-                <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Journal / Libellé</th>
+                <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Journal / LibellÃ©</th>
                 <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Montant</th>
                 <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Empreinte (SHA-Hash)</th>
                 <th className="px-6 py-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
@@ -145,11 +145,11 @@ export default function AuditIntegrite() {
                     <td className="px-6 py-4">
                       {r.isValid ? (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700 uppercase tracking-widest">
-                          <ShieldCheck size={10} className="mr-1" /> Scellé
+                          <ShieldCheck size={10} className="mr-1" /> ScellÃ©
                         </span>
                       ) : (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-700 uppercase tracking-widest">
-                          <ShieldAlert size={10} className="mr-1" /> Altéré
+                          <ShieldAlert size={10} className="mr-1" /> AltÃ©rÃ©
                         </span>
                       )}
                     </td>
@@ -160,7 +160,7 @@ export default function AuditIntegrite() {
                 <tr>
                   <td colSpan={5} className="px-6 py-20 text-center">
                     <Fingerprint className="mx-auto text-slate-200 mb-4" size={48} />
-                    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Aucune empreinte à auditer pour le moment</p>
+                    <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Aucune empreinte Ã  auditer pour le moment</p>
                   </td>
                 </tr>
               )}
@@ -171,3 +171,4 @@ export default function AuditIntegrite() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+ï»¿import { useState } from 'react';
 import { Info, Search, Plus, FileDown, Filter } from 'lucide-react';
 
 export default function Informations() {
@@ -10,7 +10,7 @@ export default function Informations() {
             <Info className="text-primary" />
             Informations Dossier
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Propriétés du dossier comptable en cours</p>
+          <p className="text-sm text-slate-500 mt-1">PropriÃ©tÃ©s du dossier comptable en cours</p>
         </div>
         <div className="flex space-x-3">
           <button className="px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 flex items-center space-x-2">
@@ -39,7 +39,7 @@ export default function Informations() {
             <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
           </div>
           <div className="text-sm text-slate-500 font-medium">
-            Prêt à configurer
+            PrÃªt Ã  configurer
           </div>
         </div>
 
@@ -50,20 +50,20 @@ export default function Informations() {
                 <Info size={24} className="text-indigo-500" />
               </div>
               <div>
-                <h3 className="text-lg font-medium text-slate-800">Interface Standard Sage 100</h3>
+                <h3 className="text-lg font-medium text-slate-800">Interface Standard DIAWDI 100</h3>
                 <p className="text-slate-600 mt-1 text-sm">
-                  L'infrastructure de cette page est préparée. Les grilles de données, les options de paramétrage spécifiques et l'intégration avec le Store global (Zustand) sont en place pour recevoir les fonctionnalités avancées.
+                  L'infrastructure de cette page est prÃ©parÃ©e. Les grilles de donnÃ©es, les options de paramÃ©trage spÃ©cifiques et l'intÃ©gration avec le Store global (Zustand) sont en place pour recevoir les fonctionnalitÃ©s avancÃ©es.
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-4">
                   <div className="border border-slate-200 rounded p-3 bg-white">
                     <div className="text-xs text-slate-400 uppercase font-semibold">Statut Module</div>
                     <div className="font-medium text-emerald-600 flex items-center gap-1 mt-1">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                      UI Générée
+                      UI GÃ©nÃ©rÃ©e
                     </div>
                   </div>
                   <div className="border border-slate-200 rounded p-3 bg-white">
-                    <div className="text-xs text-slate-400 uppercase font-semibold">Intégration DB</div>
+                    <div className="text-xs text-slate-400 uppercase font-semibold">IntÃ©gration DB</div>
                     <div className="font-medium text-amber-600 flex items-center gap-1 mt-1">
                       <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
                       En attente de liaison
@@ -78,3 +78,4 @@ export default function Informations() {
     </div>
   );
 }
+

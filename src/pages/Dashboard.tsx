@@ -20,7 +20,7 @@ export default function Dashboard() {
        <div className="w-32 h-32 bg-indigo-50 rounded-[2.5rem] flex items-center justify-center text-indigo-600 mb-8">
           <Database size={56} strokeWidth={1.5} />
        </div>
-       <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tighter">Bienvenue sur Diamond Azure</h2>
+       <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tighter">Bienvenue sur DIAWDI Azure</h2>
        <p className="text-slate-500 max-w-md text-center font-medium mb-10 italic">Ouvrez un dossier pour accéder à votre espace de travail professionnel.</p>
        <button onClick={loadDemoOHADA} className="btn-elite flex items-center gap-3">
           <Zap size={18} /> CHARGER DÉMO OHADA
@@ -125,3 +125,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

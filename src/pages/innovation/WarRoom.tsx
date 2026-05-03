@@ -36,7 +36,7 @@ export default function WarRoom() {
             <div className="p-4 bg-slate-900 rounded-[2rem] text-white shadow-2xl shadow-indigo-200">
               <Brain size={40} className="animate-pulse" />
             </div>
-            Diamond Intelligence Center
+            DIAWDI Intelligence Center
           </h1>
           <p className="text-slate-500 font-bold text-lg mt-4 uppercase tracking-[0.3em]">Consolidation Stratégique Multi-Dossiers</p>
         </div>
@@ -138,3 +138,4 @@ export default function WarRoom() {
     </div>
   );
 }
+

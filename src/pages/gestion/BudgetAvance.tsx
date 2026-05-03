@@ -158,7 +158,7 @@ export default function BudgetAvance() {
                        <p className="text-3xl font-black">{lignes.reduce((s,l) => s + (l.debit - l.credit), 0).toLocaleString()} FCFA</p>
                     </div>
                     <div className="card-elite bg-slate-900 text-white">
-                       <p className="text-[10px] font-black uppercase text-slate-400 mb-2">Taux d'Atterrissage</p>
+                       <p className="text-[10px] font-black uppercase text-slate-400 mb-2">Taux d'AtterrisDIAWDI</p>
                        <p className="text-3xl font-black">{(lignes.length > 0 ? (lignes.reduce((s,l) => s + (l.debit-l.credit), 0) / budgets.reduce((s,b) => s+b.montantAnnuel, 1) * 100).toFixed(1) : 0)}%</p>
                     </div>
                  </div>
@@ -184,3 +184,4 @@ export default function BudgetAvance() {
     </div>
   );
 }
+

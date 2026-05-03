@@ -63,7 +63,7 @@ export default function ParametresSociete() {
             </div>
             Configuration Expert
           </h1>
-          <p className="text-slate-500 font-medium mt-1">Personnalisez votre environnement de travail Diamond Azure Elite.</p>
+          <p className="text-slate-500 font-medium mt-1">Personnalisez votre environnement de travail DIAWDI Azure Elite.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -277,7 +277,7 @@ export default function ParametresSociete() {
                   </div>
                 </div>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Toutes les écritures, le plan comptable, les tiers et les journaux liés à ce dossier seront définitivement effacés de la base de données Diamond Azure. Cette opération est irréversible.
+                  Toutes les écritures, le plan comptable, les tiers et les journaux liés à ce dossier seront définitivement effacés de la base de données DIAWDI Azure. Cette opération est irréversible.
                 </p>
                 <button 
                   onClick={handleDelete}
@@ -293,3 +293,4 @@ export default function ParametresSociete() {
     </div>
   );
 }
+

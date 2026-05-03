@@ -25,7 +25,7 @@ export default function SecurityHub() {
       const dataStr = JSON.stringify(fullState, null, 2);
       const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
       
-      const exportFileDefaultName = `Diamond_Azure_Elite_Backup_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+      const exportFileDefaultName = `DIAWDI_Azure_Elite_Backup_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
       
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
@@ -47,7 +47,7 @@ export default function SecurityHub() {
              </div>
              Elite Governance Hub
           </h1>
-          <p className="text-slate-500 font-medium mt-2 italic">Contrôle d'accès, piste d'audit et coffre-fort numérique Diamond.</p>
+          <p className="text-slate-500 font-medium mt-2 italic">Contrôle d'accès, piste d'audit et coffre-fort numérique DIAWDI.</p>
         </div>
         <div className="flex gap-4">
            <button 
@@ -70,7 +70,7 @@ export default function SecurityHub() {
                  { label: "Double Authentification (MFA)", status: "ACTIF", color: "text-emerald-500" },
                  { label: "Cryptage Point-à-Point", status: "ACTIF", color: "text-emerald-500" },
                  { label: "Journal de Traçabilité", status: "ACTIF", color: "text-emerald-500" },
-                 { label: "Diamond Seal Engine", status: "ACTIF", color: "text-emerald-500" },
+                 { label: "DIAWDI Seal Engine", status: "ACTIF", color: "text-emerald-500" },
                ].map((s, i) => (
                  <div key={i} className="flex justify-between items-center border-b border-slate-50 pb-4 last:border-0">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.label}</span>
@@ -153,3 +153,4 @@ export default function SecurityHub() {
     </div>
   );
 }
+

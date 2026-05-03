@@ -1,5 +1,5 @@
 ﻿/**
- * Diamond Azure Elite - Universal Export Engine
+ * DIAWDI Azure Elite - Universal Export Engine
  * Handles CSV (Excel compatible), PDF Print formatting and FEC (Fichier des Écritures Comptables)
  */
 
@@ -75,3 +75,4 @@ export const generateFEC = (lignes: any[], dossiers: any[], journaux: any[], com
 export const triggerPrint = () => {
   window.print();
 };
+

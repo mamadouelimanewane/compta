@@ -142,7 +142,7 @@ export default function Exporter() {
                <div className="space-y-6 relative z-10">
                   <div className="flex items-center gap-4">
                      <CheckCircle className="text-emerald-400" size={20} />
-                     <p className="text-xs font-bold text-slate-300">Signature Diamond Seal active</p>
+                     <p className="text-xs font-bold text-slate-300">Signature DIAWDI Seal active</p>
                   </div>
                   <div className="flex items-center gap-4">
                      <CheckCircle className="text-emerald-400" size={20} />
@@ -158,3 +158,4 @@ export default function Exporter() {
     </div>
   );
 }
+

@@ -170,7 +170,7 @@ export default function Bilan() {
                </div>
                <div>
                   <p className="text-xs font-black uppercase tracking-widest">{Math.abs(stats.totalActif - stats.totalPassif) < 1 ? 'BILAN ÉQUILIBRÉ & CERTIFIÉ' : 'ÉCART DE BILAN DÉTECTÉ'}</p>
-                  <p className="text-[10px] font-black text-white/40 italic uppercase tracking-widest">Intégrité de structure vérifiée par Diamond Seal</p>
+                  <p className="text-[10px] font-black text-white/40 italic uppercase tracking-widest">Intégrité de structure vérifiée par DIAWDI Seal</p>
                </div>
             </div>
          </div>
@@ -178,3 +178,4 @@ export default function Bilan() {
     </div>
   );
 }
+

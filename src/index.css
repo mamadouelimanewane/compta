@@ -5,11 +5,11 @@
   --color-indigo-elite: #4f46e5;
   --color-slate-elite: #0f172a;
   --color-emerald-elite: #10b981;
-  --color-diamond-bg: #f8fafc;
+  --color-DIAWDI-bg: #f8fafc;
   
   --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
   
-  --radius-diamond: 2.5rem;
+  --radius-DIAWDI: 2.5rem;
   --radius-elite: 1.5rem;
 }
 
@@ -44,7 +44,7 @@
   }
 
   /* Premium Gradients */
-  .bg-diamond-gradient {
+  .bg-DIAWDI-gradient {
     background: radial-gradient(circle at top right, #f8fafc 0%, #eff6ff 100%);
   }
 
@@ -72,3 +72,4 @@
     @apply w-full px-6 py-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 shadow-inner transition-all;
   }
 }
+

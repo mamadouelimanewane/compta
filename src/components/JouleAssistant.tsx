@@ -4,30 +4,30 @@ import { useStore } from '../store/useStore';
 
 export default function JouleAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const [mesDIAWDI, setMesDIAWDI] = useState('');
   const [history, setHistory] = useState<{ role: 'ai' | 'user', text: string, type?: 'insight' | 'warning' | 'success' }[]>([
-    { role: 'ai', text: "Bonjour ! Je suis Joule, votre assistant financier Diamond. Comment puis-je vous aider aujourd'hui ?", type: 'ai' }
+    { role: 'ai', text: "Bonjour ! Je suis Joule, votre assistant financier DIAWDI. Comment puis-je vous aider aujourd'hui ?", type: 'ai' }
   ]);
   
   const currentDossierId = useStore(state => state.currentDossierId);
   const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
 
   const handleSend = () => {
-    if (!message.trim()) return;
+    if (!mesDIAWDI.trim()) return;
     
-    const newHistory = [...history, { role: 'user', text: message } as any];
+    const newHistory = [...history, { role: 'user', text: mesDIAWDI } as any];
     setHistory(newHistory);
-    setMessage('');
+    setMesDIAWDI('');
 
     setTimeout(() => {
       let aiResponse = "Je n'ai pas assez de données pour répondre précisément. Essayez de me demander une analyse de ma trésorerie.";
       let type: any = 'ai';
 
-      if (message.toLowerCase().includes('trésorerie') || message.toLowerCase().includes('argent')) {
+      if (mesDIAWDI.toLowerCase().includes('trésorerie') || mesDIAWDI.toLowerCase().includes('argent')) {
         const solde = lignes.reduce((sum, l) => sum + (l.debit - l.credit), 0);
         aiResponse = Votre solde de trésorerie actuel est de  FCFA. L'analyse prédictive indique une stabilité pour les 30 prochains jours.;
         type = 'insight';
-      } else if (message.toLowerCase().includes('clôture')) {
+      } else if (mesDIAWDI.toLowerCase().includes('clôture')) {
         aiResponse = "La clôture annuelle est disponible dans le menu Traitement. N'oubliez pas d'imprimer votre grand-livre avant de lancer la procédure.";
         type = 'warning';
       }
@@ -46,7 +46,7 @@ export default function JouleAssistant() {
                 <Bot size={20} />
               </div>
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-indigo-200">Diamond AI</p>
+                <p className="text-xs font-black uppercase tracking-widest text-indigo-200">DIAWDI AI</p>
                 <p className="text-sm font-bold">Joule Intelligence</p>
               </div>
             </div>
@@ -72,8 +72,8 @@ export default function JouleAssistant() {
               type="text" 
               className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
               placeholder="Posez une question financière..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={mesDIAWDI}
+              onChange={(e) => setMesDIAWDI(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             />
             <button 
@@ -98,3 +98,4 @@ export default function JouleAssistant() {
     </div>
   );
 }
+

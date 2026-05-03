@@ -148,7 +148,7 @@ export default function Balance() {
                </div>
                <div>
                   <p className="text-lg font-black tracking-tight">{isBalanced ? 'BALANCE ÉQUILIBRÉE' : 'ÉCART DE BALANCE'}</p>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Signature Diamond Seal Certifiée</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Signature DIAWDI Seal Certifiée</p>
                </div>
             </div>
          </div>
@@ -160,3 +160,4 @@ export default function Balance() {
 const AlertTriangle = ({ size }: { size: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
 );
+

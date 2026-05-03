@@ -149,7 +149,7 @@ export default function Importer() {
                  <Loader2 className="animate-spin text-emerald-600" size={64} />
                  <div>
                     <h2 className="text-2xl font-black text-slate-900">Traitement Haute Performance</h2>
-                    <p className="text-slate-500 font-medium mt-2 italic">Injection des données dans le moteur Diamond Azure...</p>
+                    <p className="text-slate-500 font-medium mt-2 italic">Injection des données dans le moteur DIAWDI Azure...</p>
                  </div>
                  <div className="w-full max-w-md h-3 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${simProgress}%` }}></div>
@@ -276,3 +276,4 @@ export default function Importer() {
     </div>
   );
 }
+
