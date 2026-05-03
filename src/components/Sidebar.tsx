@@ -74,7 +74,7 @@ export default function Sidebar() {
                <ShieldCheck size={24} strokeWidth={3} />
             </div>
             <div>
-               <h1 className="text-xl font-black text-slate-900 tracking-tighter leading-none">DIAMOND</h1>
+               <h1 className="text-xl font-black text-slate-900 tracking-tighter leading-none">DIAWDI</h1>
                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Azure Elite ERP</p>
             </div>
          </div>
@@ -127,3 +127,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+
