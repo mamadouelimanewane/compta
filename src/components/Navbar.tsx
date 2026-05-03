@@ -23,9 +23,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className={`sticky top-0 z-[100] px-8 py-4 transition-all duration-500 ${
-      isScrolled ? 'bg-white/80 backdrop-blur-2xl border-b border-slate-100 shadow-sm' : 'bg-slate-50'
-    }`}>
+    <nav className="sticky top-0 z-[100] px-8 py-4 bg-black border-b border-white/10 shadow-2xl transition-all duration-500">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
         <div className="flex items-center gap-12">
           {/* Search Bar Elite */}
@@ -33,44 +31,44 @@ export default function Navbar() {
             <input 
               type="text" 
               placeholder="Commande rapide (Ctrl + K)"
-              className="pl-12 pr-6 py-3 bg-white border border-slate-100 rounded-2xl text-xs font-bold w-80 shadow-sm group-focus-within:ring-2 group-focus-within:ring-indigo-500 transition-all"
+              className="pl-12 pr-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold w-80 shadow-inner text-white focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-500"
             />
-            <Command size={16} className="absolute left-4 top-3.5 text-slate-400" />
+            <Command size={16} className="absolute left-4 top-3.5 text-slate-500" />
           </div>
         </div>
 
         <div className="flex items-center gap-6">
            {/* Regional Compliance Badge */}
-           <div className="hidden xl:flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl">
-              <Globe size={14} className="text-emerald-600" />
-              <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">OHADA / UEMOA CONFORM</span>
+           <div className="hidden xl:flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+              <Globe size={14} className="text-emerald-400" />
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">OHADA / UEMOA CONFORM</span>
            </div>
 
            {/* Notifications */}
-           <button className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-indigo-600 hover:shadow-lg transition-all relative">
+           <button className="p-3 bg-white/5 border border-white/10 rounded-2xl text-slate-400 hover:text-white hover:bg-white/10 transition-all relative">
               <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
+              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-black"></span>
            </button>
 
            {/* Dossier Selector / Status */}
-           <div className="h-10 w-px bg-slate-200"></div>
+           <div className="h-10 w-px bg-white/10"></div>
 
-           <div className="flex items-center gap-4 group cursor-pointer">
+           <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/ouvrir')}>
               <div className="text-right">
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Dossier Actif</p>
-                 <p className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors">
+                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Dossier Actif</p>
+                 <p className="text-sm font-black text-white group-hover:text-indigo-400 transition-colors">
                     {currentDossier?.raisonSociale || "Aucun dossier"}
                  </p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-xl transition-transform group-hover:scale-105">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-xl transition-transform group-hover:scale-105">
                  {currentDossier?.raisonSociale?.substring(0, 2).toUpperCase() || <Database size={20} />}
               </div>
-              <ChevronDown size={14} className="text-slate-400" />
+              <ChevronDown size={14} className="text-slate-500" />
            </div>
 
            <button 
-             onClick={() => { setCurrentDossier(null); navigate('/ouvrir'); }}
-             className="p-3 bg-rose-50 text-rose-600 rounded-2xl hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+             onClick={(e) => { e.stopPropagation(); setCurrentDossier(null); navigate('/ouvrir'); }}
+             className="p-3 bg-rose-500/10 text-rose-500 rounded-2xl hover:bg-rose-500 hover:text-white transition-all shadow-sm"
              title="Fermer Dossier"
            >
               <LogOut size={18} />
