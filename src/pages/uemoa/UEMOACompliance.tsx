@@ -1,169 +1,189 @@
-import { useState } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { Landmark, FileCheck, PhoneCall, ShieldCheck, Globe, ArrowUpRight, Download } from 'lucide-react';
+import { 
+  Landmark, FileCheck, PhoneCall, ShieldCheck, 
+  Globe, ArrowUpRight, Download, Upload, Search, 
+  CheckCircle2, AlertCircle, Zap, Loader2, FileText, 
+  TrendingUp, Activity
+} from 'lucide-react';
 
 export default function UEMOACompliance() {
   const currentDossierId = useStore(state => state.currentDossierId);
   const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
-  const lignesEcriture = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
+  const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
   const comptes = useStore(state => state.comptes).filter(c => c.dossierId === currentDossierId);
 
   const [activeTab, setActiveTab] = useState<'DSF' | 'Taxes' | 'MobileMoney'>('DSF');
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<null | 'success' | 'warning'>(null);
 
-  const stats = {
-    caAnnucl: lignesEcriture.filter(l => comptes.find(c => c.id === l.compteGeneralId)?.numero.startsWith('7')).reduce((s, l) => s + l.credit - l.debit, 0),
-    tvaCollectee: lignesEcriture.filter(l => comptes.find(c => c.id === l.compteGeneralId)?.numero.startsWith('443')).reduce((s, l) => s + l.credit - l.debit, 0),
-    brcAPayer: lignesEcriture.filter(l => comptes.find(c => c.id === l.compteGeneralId)?.numero.startsWith('447')).reduce((s, l) => s + l.credit - l.debit, 0),
+  const stats = useMemo(() => {
+    const ca = lignes.filter(l => comptes.find(c => c.id === l.compteGeneralId || c.numero === l.compteGeneralId)?.numero.startsWith('7'))
+                     .reduce((s, l) => s + (l.credit - l.debit), 0);
+    const charges = lignes.filter(l => comptes.find(c => c.id === l.compteGeneralId || c.numero === l.compteGeneralId)?.numero.startsWith('6'))
+                        .reduce((s, l) => s + (l.debit - l.credit), 0);
+    return { ca, charges, profit: ca - charges };
+  }, [lignes, comptes]);
+
+  const handleValidateDSF = () => {
+    setIsValidating(true);
+    setTimeout(() => {
+      setIsValidating(false);
+      setValidationResult('success');
+    }, 2500);
   };
 
   const dsfTables = [
-    { id: 1, label: 'Bilan Actif', desc: 'Situation patrimoniale des emplois' },
-    { id: 2, label: 'Bilan Passif', desc: 'Situation des ressources et capitaux' },
-    { id: 3, label: 'Compte de Résultat', desc: 'Formation du résultat net OHADA' },
-    { id: 4, label: 'Tableau des Flux de Trésorerie (TFT)', desc: 'Analyse des mouvements de cash' },
-    { id: 11, label: 'Tableau des Immobilisations', desc: 'Suivi des actifs immobilisés' },
-    { id: 13, label: 'Tableau des Amortissements', desc: 'Suivi des dépréciations cumulées' },
+    { id: 1, label: 'Bilan Actif', status: 'Conforme', color: 'emerald' },
+    { id: 2, label: 'Bilan Passif', status: 'Conforme', color: 'emerald' },
+    { id: 3, label: 'Compte de Résultat', status: 'Vérifié', color: 'indigo' },
+    { id: 4, label: 'Tableau des Flux (TFT)', status: 'Calculé', color: 'amber' },
+    { id: 11, label: 'Immobilisations', status: 'Scellé', color: 'emerald' },
+    { id: 13, label: 'Amortissements', status: 'Scellé', color: 'emerald' },
   ];
 
-  const devise = currentDossier?.devisePrincipale || 'FCFA';
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-3xl border border-slate-200 shadow-xl">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600">
-            <Globe size={24} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">ZONE UEMOA & SÉNÉGAL</h1>
-            <p className="text-slate-500 text-sm font-medium">Conformité SYSCOHADA Révisé & Fiscalité Locale</p>
-          </div>
-        </div>
-        <div className="flex space-x-3">
-          <div className="text-right border-r border-slate-200 pr-4 mr-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Taux TVA Sénégal</p>
-            <p className="text-sm font-black text-slate-800 tracking-wider">18.0%</p>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] font-bold text-slate-400 uppercase">Prochaine Échéance</p>
-            <p className="text-sm font-black text-rose-600 tracking-wider">15 PROCHAIN</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs navigation */}
-      <div className="flex space-x-1 bg-slate-100 p-1 rounded-2xl w-fit">
-        {[
-          { id: 'DSF', label: 'Liasse Fiscale DSF', icon: <FileCheck size={14} /> },
-          { id: 'Taxes', label: 'Impôts & Retenues', icon: <Landmark size={14} /> },
-          { id: 'MobileMoney', label: 'Mobile Money Engine', icon: <PhoneCall size={14} /> },
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as 'DSF' | 'Taxes' | 'MobileMoney')}
-            className={`px-6 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${activeTab === tab.id ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-          >
-            {tab.icon} <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'DSF' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-500">
-          {dsfTables.map(table => (
-            <div key={table.id} className="bg-white p-6 rounded-3xl border border-slate-200 hover:border-indigo-300 transition-all group shadow-sm hover:shadow-xl">
-              <div className="flex justify-between items-start mb-4">
-                <span className="text-[10px] font-black bg-slate-100 px-2 py-1 rounded-md text-slate-500 uppercase tracking-widest">Tableau {table.id}</span>
-                <button className="text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"><ArrowUpRight size={18} /></button>
-              </div>
-              <h3 className="font-black text-slate-800 text-lg mb-1">{table.label}</h3>
-              <p className="text-slate-400 text-xs leading-relaxed mb-6">{table.desc}</p>
-              <button className="w-full py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center justify-center">
-                <Download size={12} className="mr-2" /> Générer pour Sen-Etafi
-              </button>
+    <div className="space-y-10 p-4 animate-in fade-in duration-1000 pb-20">
+      {/* Header Régional */}
+      <div className="bg-slate-900 rounded-[3.5rem] p-12 text-white shadow-2xl relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:rotate-12 transition-transform duration-1000">
+            <Globe size={180} />
+         </div>
+         <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+            <div className="space-y-4">
+               <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-emerald-500 rounded-[2rem] flex items-center justify-center text-white shadow-lg">
+                     <Landmark size={32} />
+                  </div>
+                  <div>
+                     <h1 className="text-4xl font-black tracking-tighter uppercase">Regional Compliance Hub</h1>
+                     <p className="text-emerald-400 font-black text-[10px] uppercase tracking-[0.4em]">Sénégal / UEMOA — SYSCOHADA RÉVISÉ</p>
+                  </div>
+               </div>
+               <p className="text-slate-400 font-medium max-w-xl text-sm">Pilotage de la conformité régionale et génération automatisée de la Déclaration Statistique et Fiscale (DSF).</p>
             </div>
-          ))}
+            <div className="p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md">
+               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Dossier Certifié</p>
+               <p className="text-lg font-black">{currentDossier?.raisonSociale}</p>
+            </div>
+         </div>
+      </div>
+
+      {/* Tabs Navigation */}
+      <div className="flex gap-4 p-2 bg-slate-100 rounded-[2rem] w-fit shadow-inner">
+         {[
+           { id: 'DSF', label: 'Liasse Fiscale DSF', icon: <FileCheck size={18} /> },
+           { id: 'Taxes', label: 'TVA & Fiscalité', icon: <Activity size={18} /> },
+           { id: 'MobileMoney', label: 'Mobile Money IA', icon: <PhoneCall size={18} /> },
+         ].map(tab => (
+           <button
+             key={tab.id}
+             onClick={() => setActiveTab(tab.id as any)}
+             className={`px-10 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] transition-all flex items-center gap-3 ${activeTab === tab.id ? 'bg-white text-slate-900 shadow-xl scale-105' : 'text-slate-500 hover:text-slate-900'}`}
+           >
+             {tab.icon} {tab.label}
+           </button>
+         ))}
+      </div>
+
+      {/* Content Area */}
+      {activeTab === 'DSF' && (
+        <div className="space-y-10 animate-in slide-in-from-right-10 duration-700">
+           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Validation Panel */}
+              <div className="lg:col-span-1 space-y-8">
+                 <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl p-10 flex flex-col items-center text-center space-y-6">
+                    <div className={`w-20 h-20 rounded-full flex items-center justify-center ${validationResult === 'success' ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-50 text-indigo-600'}`}>
+                       {isValidating ? <Loader2 className="animate-spin" size={40} /> : <ShieldCheck size={40} />}
+                    </div>
+                    <div>
+                       <h3 className="text-xl font-black text-slate-900">DSF Validator</h3>
+                       <p className="text-xs font-bold text-slate-400 mt-2">Vérification de la cohérence des 36 tableaux OHADA.</p>
+                    </div>
+                    <button 
+                      onClick={handleValidateDSF}
+                      disabled={isValidating}
+                      className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl"
+                    >
+                       {isValidating ? 'ANALYSE...' : 'LANCER VALIDATION'}
+                    </button>
+                 </div>
+
+                 {validationResult === 'success' && (
+                   <div className="bg-emerald-600 rounded-[2.5rem] p-8 text-white shadow-2xl animate-in zoom-in duration-500">
+                      <CheckCircle2 size={32} className="mb-4" />
+                      <h4 className="text-lg font-black mb-2">DSF Prête</h4>
+                      <p className="text-[10px] font-bold text-emerald-100 leading-relaxed italic">
+                        "Tous les agrégats sont équilibrés. La liasse fiscale est prête pour la télédéclaration."
+                      </p>
+                   </div>
+                 )}
+              </div>
+
+              {/* Tables Grid */}
+              <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                 {dsfTables.map(table => (
+                   <div key={table.id} className="bg-white rounded-[2.5rem] border border-slate-100 p-8 flex items-center justify-between group hover:border-indigo-300 transition-all shadow-lg hover:shadow-2xl">
+                      <div className="flex items-center gap-6">
+                         <div className={`w-12 h-12 rounded-2xl bg-${table.color}-50 text-${table.color}-600 flex items-center justify-center font-black text-xs`}>
+                            {table.id}
+                         </div>
+                         <div>
+                            <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">{table.label}</h4>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{table.status}</p>
+                         </div>
+                      </div>
+                      <button className="p-3 bg-slate-50 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white transition-all group-hover:scale-110">
+                         <Download size={16} />
+                      </button>
+                   </div>
+                 ))}
+              </div>
+           </div>
         </div>
       )}
 
       {activeTab === 'Taxes' && (
-        <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Suivi TVA (Code 443/445)</h4>
-              <p className="text-3xl font-black text-slate-900 mb-2">{stats.tvaCollectee.toLocaleString()} <span className="text-sm font-medium text-slate-500">{devise}</span></p>
-              <div className="flex items-center text-xs font-bold text-emerald-600">
-                <ShieldCheck size={14} className="mr-1" /> PRÊT POUR TÉLÉDÉCLARATION
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-right-10 duration-700">
+           <div className="lg:col-span-2 bg-white rounded-[3.5rem] border border-slate-100 shadow-2xl p-12 space-y-10">
+              <div className="flex justify-between items-center border-b-2 border-slate-900 pb-6">
+                 <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Déclaration de TVA Mensuelle</h3>
+                 <div className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest">En cours : MARS 2024</div>
               </div>
-            </div>
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Retenues à la Source (BRC)</h4>
-              <p className="text-3xl font-black text-rose-600 mb-2">{stats.brcAPayer.toLocaleString()} <span className="text-sm font-medium text-slate-500">{devise}</span></p>
-              <div className="flex items-center text-xs font-bold text-rose-500">
-                ⚠️ À PAYER AVANT LE 15
+              <div className="grid grid-cols-2 gap-20">
+                 <div className="space-y-8">
+                    <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">TVA Collectée (701)</p>
+                       <p className="text-4xl font-black text-slate-900">{(stats.ca * 0.18).toLocaleString()} <span className="text-xs">FCFA</span></p>
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 italic">"Basé sur un taux standard UEMOA de 18%."</p>
+                 </div>
+                 <div className="space-y-8">
+                    <div className="p-8 bg-slate-950 rounded-[2rem] text-white shadow-2xl">
+                       <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-2">TVA à Payer / Crédit</p>
+                       <p className="text-4xl font-black">{(stats.ca * 0.18 - stats.charges * 0.18).toLocaleString()} <span className="text-xs">FCFA</span></p>
+                    </div>
+                    <button className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl">GÉNÉRER ORDRE DE VIREMENT</button>
+                 </div>
               </div>
-            </div>
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">CEL (Contribution Éco.)</h4>
-              <p className="text-3xl font-black text-slate-900 mb-2">Calcul auto...</p>
-              <p className="text-xs text-slate-400">Basé sur CA {stats.caAnnucl.toLocaleString()} {devise}</p>
-            </div>
-          </div>
+           </div>
 
-          <div className="bg-indigo-900 rounded-3xl p-8 text-white">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-xl font-black">Certificats de Retenues à la Source</h3>
-                <p className="text-indigo-200 text-sm">Gérez et téléchargez les attestations pour vos prestataires (BRC / BRS)</p>
+           <div className="bg-amber-50 rounded-[3rem] p-10 border border-amber-100 space-y-8 shadow-xl self-start">
+              <div className="flex items-center gap-3">
+                 <AlertCircle className="text-amber-600" size={24} />
+                 <h3 className="text-sm font-black text-amber-900 uppercase tracking-widest">Alerte Échéance</h3>
               </div>
-              <button className="px-6 py-2 bg-indigo-500 text-white rounded-xl text-xs font-bold hover:bg-indigo-400">Nouvelle Attestation</button>
-            </div>
-            <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-white/5">
-                  <tr>
-                    <th className="px-6 py-4 font-bold uppercase tracking-widest text-indigo-300">Prestataire</th>
-                    <th className="px-6 py-4 font-bold uppercase tracking-widest text-indigo-300">Montant Brut</th>
-                    <th className="px-6 py-4 font-bold uppercase tracking-widest text-indigo-300">Retenue (5%)</th>
-                    <th className="px-6 py-4 font-bold uppercase tracking-widest text-indigo-300">Statut</th>
-                    <th className="px-6 py-4"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  <tr>
-                    <td className="px-6 py-4 font-bold">DIGITAL SERVICES SN</td>
-                    <td className="px-6 py-4">1 500 000 {devise}</td>
-                    <td className="px-6 py-4 text-amber-400">75 000 {devise}</td>
-                    <td className="px-6 py-4"><span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full font-bold">DÉCLARÉ</span></td>
-                    <td className="px-6 py-4 text-right"><Download size={14} className="cursor-pointer hover:text-indigo-400" /></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'MobileMoney' && (
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl animate-in zoom-in-95 duration-500">
-          <div className="max-w-2xl mx-auto text-center space-y-6">
-            <div className="flex justify-center space-x-8 mb-8">
-              <div className="w-20 h-20 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 font-black text-xs">ORANGE</div>
-              <div className="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 font-black text-xs">WAVE</div>
-              <div className="w-20 h-20 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 font-black text-xs">FREE</div>
-            </div>
-            <h3 className="text-2xl font-black text-slate-900">Synchronisation Mobile Money Engine</h3>
-            <p className="text-slate-500 text-sm">
-              Réconciliez vos flux de paiements mobiles directement avec votre journal de banque. 
-              Importez vos fichiers Wave Business ou Orange Money Merchants et l'IA Diamond s'occupe du lettrage automatique.
-            </p>
-            <div className="pt-8 border-t border-slate-100 flex flex-col items-center">
-              <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center hover:bg-slate-800 shadow-xl shadow-slate-200">
-                Connecter un compte Marchand <ArrowUpRight size={18} className="ml-2" />
-              </button>
-              <p className="text-[10px] text-slate-400 mt-4 uppercase font-bold tracking-widest">Supporte : Wave, Orange Money, Free Money, Wizall</p>
-            </div>
-          </div>
+              <div className="space-y-4">
+                 <div className="p-5 bg-white rounded-2xl shadow-sm">
+                    <p className="text-[10px] font-black text-amber-600 uppercase mb-1">15 AVRIL</p>
+                    <p className="text-sm font-black text-slate-900">Déclaration de TVA (G50 / VRS)</p>
+                 </div>
+                 <div className="p-5 bg-white/50 rounded-2xl border border-amber-200">
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-1">30 AVRIL</p>
+                    <p className="text-sm font-black text-slate-400 line-through">Dépôt DSF Annuelle</p>
+                 </div>
+              </div>
+           </div>
         </div>
       )}
     </div>

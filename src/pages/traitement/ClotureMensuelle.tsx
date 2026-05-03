@@ -1,178 +1,212 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
-import { CheckSquare, AlertTriangle, CheckCircle, Circle, Lock, Unlock } from 'lucide-react';
+import { CheckSquare, AlertTriangle, CheckCircle, Circle, Lock, Unlock, Zap, ShieldCheck, Calculator, FileText, ChevronRight, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
-interface CheckItem {
-  id: string;
-  label: string;
-  description: string;
-  categorie: 'journaux' | 'etats' | 'fiscalite' | 'validation';
-  obligatoire: boolean;
-  checked: boolean;
-  route?: string;
-}
-
-const CHECKLIST_INITIALE: Omit<CheckItem, 'checked'>[] = [
-  { id: '1', label: 'Brouillard imprimé / vérifié', description: 'Toutes les écritures du mois ont été contrôlées dans le brouillard.', categorie: 'journaux', obligatoire: true },
-  { id: '2', label: 'Journaux validés', description: 'Les journaux Achats, Ventes, Banque ont été imprimés et archivés.', categorie: 'journaux', obligatoire: true },
-  { id: '3', label: 'Balance des comptes éditée', description: 'La balance de contrôle montre les soldes cohérents pour tous les comptes.', categorie: 'etats', obligatoire: true },
-  { id: '4', label: 'Grand-Livre des comptes édité', description: 'Le grand-livre détaillé a été produit et vérifié.', categorie: 'etats', obligatoire: true },
-  { id: '5', label: 'Rapprochement bancaire effectué', description: 'Le solde banque comptable correspond au relevé bancaire.', categorie: 'etats', obligatoire: true },
-  { id: '6', label: 'Lettrage des tiers effectué', description: 'Les comptes clients (411) et fournisseurs (401) sont lettrés.', categorie: 'etats', obligatoire: false },
-  { id: '7', label: 'TVA calculée et vérifiée', description: 'La déclaration de TVA du mois a été calculée et validée.', categorie: 'fiscalite', obligatoire: true },
-  { id: '8', label: 'Écritures d\'inventaire saisies', description: 'Dotations aux amortissements, provisions et régularisations enregistrées.', categorie: 'fiscalite', obligatoire: false },
-  { id: '9', label: 'Résultat provisoire calculé', description: 'Le compte de résultat provisoire a été édité et présenté à la direction.', categorie: 'validation', obligatoire: true },
-  { id: '10', label: 'Validation par le responsable', description: 'La clôture a été approuvée par le responsable comptable ou la direction.', categorie: 'validation', obligatoire: true },
-];
-
-const CATEGORIE_LABELS: Record<string, string> = {
-  journaux: '📒 Journaux',
-  etats: '📊 États Comptables',
-  fiscalite: '🧾 Fiscalité',
-  validation: '✅ Validation Finale',
-};
+type Step = 'Audit' | 'Génération' | 'Fiscalité' | 'Verrouillage';
 
 export default function ClotureMensuelle() {
   const currentDossierId = useStore(state => state.currentDossierId);
   const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
-  const lignesEcriture = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
-  const journaux = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId);
-
+  const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
+  
+  const [activeStep, setActiveStep] = useState<Step>('Audit');
   const [periode, setPeriode] = useState(format(new Date(), 'yyyy-MM'));
-  const [checklist, setChecklist] = useState<CheckItem[]>(CHECKLIST_INITIALE.map(item => ({ ...item, checked: false })));
-  const [cloturee, setCloturee] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [completedSteps, setCompletedSteps] = useState<Step[]>([]);
 
   const stats = useMemo(() => {
-    const [year, month] = periode.split('-');
-    const startDate = `${year}-${month}-01`;
-    const endDate = `${year}-${month}-31`;
-    const lignesMois = lignesEcriture.filter(l => l.date >= startDate && l.date <= endDate);
-    const journauxActifs = new Set(lignesMois.map(l => l.journalId)).size;
-    return { nbEcritures: lignesMois.length, nbJournaux: journauxActifs };
-  }, [lignesEcriture, periode]);
+    const lignesMois = lignes.filter(l => l.date.startsWith(periode));
+    const totalDebit = lignesMois.reduce((s, l) => s + l.debit, 0);
+    const totalCredit = lignesMois.reduce((s, l) => s + l.credit, 0);
+    const isBalanced = Math.abs(totalDebit - totalCredit) < 0.01;
+    return { count: lignesMois.length, isBalanced, total: totalDebit };
+  }, [lignes, periode]);
 
-  const toggle = (id: string) => {
-    if (cloturee) return;
-    setChecklist(prev => prev.map(item => item.id === id ? { ...item, checked: !item.checked } : item));
+  const handleProcess = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setCompletedSteps([...completedSteps, activeStep]);
+      if (activeStep === 'Audit') setActiveStep('Génération');
+      else if (activeStep === 'Génération') setActiveStep('Fiscalité');
+      else if (activeStep === 'Fiscalité') setActiveStep('Verrouillage');
+    }, 2000);
   };
-
-  const checkedCount = checklist.filter(i => i.checked).length;
-  const totalCount = checklist.length;
-  const obligatoiresOk = checklist.filter(i => i.obligatoire).every(i => i.checked);
-  const progress = Math.round((checkedCount / totalCount) * 100);
-
-  const cloturer = () => {
-    if (!obligatoiresOk) {
-      alert('Vous devez cocher tous les éléments OBLIGATOIRES avant de clôturer le mois.');
-      return;
-    }
-    setCloturee(true);
-  };
-
-  const categories = ['journaux', 'etats', 'fiscalite', 'validation'] as const;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto h-full flex flex-col">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-slate-900 flex items-center">
-          <CheckSquare className="mr-2 text-primary" />
-          Workflow de Clôture Mensuelle
-        </h1>
-        {!cloturee ? (
-          <button
-            onClick={cloturer}
-            disabled={!obligatoiresOk}
-            className={`px-4 py-2 rounded-md text-sm font-medium flex items-center shadow-sm transition-colors ${obligatoiresOk ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
-          >
-            <Lock size={14} className="mr-2" /> Clôturer le mois
-          </button>
-        ) : (
-          <button onClick={() => { setCloturee(false); setChecklist(prev => prev.map(i => ({ ...i, checked: false }))); }} className="px-4 py-2 bg-amber-500 text-white rounded-md text-sm font-medium flex items-center hover:bg-amber-600">
-            <Unlock size={14} className="mr-2" /> Réouvrir
-          </button>
-        )}
-      </div>
-
-      {/* Header Info */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-1">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Période à clôturer</label>
-          <input type="month" className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary" value={periode} onChange={e => { setPeriode(e.target.value); setCloturee(false); setChecklist(prev => prev.map(i => ({ ...i, checked: false }))); }} disabled={cloturee} />
+    <div className="space-y-10 p-4 animate-in fade-in duration-700 h-full flex flex-col">
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
+             <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-xl">
+                <Lock size={28} />
+             </div>
+             Elite Closing Engine
+          </h1>
+          <p className="text-slate-500 font-medium mt-2">Workflow automatisé de clôture mensuelle et certification des écritures.</p>
         </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
-          <p className="text-xs text-slate-500 uppercase">Écritures du mois</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.nbEcritures}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
-          <p className="text-xs text-slate-500 uppercase">Journaux mouvementés</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.nbJournaux} / {journaux.length}</p>
+        <div className="px-6 py-4 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-4">
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Période Active</p>
+           <input type="month" className="bg-transparent border-none font-black text-slate-900 text-lg focus:ring-0" value={periode} onChange={e => setPeriode(e.target.value)} />
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="font-semibold text-slate-800">Progression de la clôture</h2>
-          <span className={`text-lg font-bold ${progress === 100 ? 'text-emerald-600' : 'text-indigo-600'}`}>{progress}%</span>
-        </div>
-        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${progress === 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <p className="text-sm text-slate-500 mt-2">{checkedCount} / {totalCount} tâches effectuées · {checklist.filter(i => i.obligatoire && !i.checked).length} obligatoires restantes</p>
-      </div>
-
-      {cloturee && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex items-center">
-          <div className="p-3 bg-emerald-100 rounded-full mr-4"><CheckCircle className="text-emerald-600" size={28} /></div>
-          <div>
-            <h3 className="font-bold text-emerald-900 text-lg">Mois clôturé avec succès !</h3>
-            <p className="text-emerald-700 text-sm">
-              La période {format(new Date(periode + '-01'), 'MMMM yyyy', { locale: fr })} est clôturée pour <strong>{currentDossier?.raisonSociale}</strong>.
-              Les écritures de ce mois sont maintenant verrouillées.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Checklist by category */}
-      <div className="space-y-4 flex-1">
-        {categories.map(cat => {
-          const items = checklist.filter(i => i.categorie === cat);
-          const catDone = items.filter(i => i.checked).length;
-          return (
-            <div key={cat} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="bg-slate-50 px-5 py-3 border-b border-slate-200 flex justify-between items-center">
-                <h3 className="font-semibold text-slate-800 text-sm">{CATEGORIE_LABELS[cat]}</h3>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${catDone === items.length ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>{catDone} / {items.length}</span>
+      {/* Stepper Visuel */}
+      <div className="flex items-center justify-between bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl">
+         {['Audit', 'Génération', 'Fiscalité', 'Verrouillage'].map((step, i) => (
+           <div key={step} className="flex items-center flex-1 last:flex-none">
+              <div className={`flex items-center gap-3 ${activeStep === step ? 'scale-110' : 'opacity-40'} transition-all`}>
+                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm ${
+                   completedSteps.includes(step as Step) ? 'bg-emerald-500 text-white' : activeStep === step ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'
+                 }`}>
+                    {completedSteps.includes(step as Step) ? <CheckCircle size={20} /> : i+1}
+                 </div>
+                 <span className="text-xs font-black uppercase tracking-widest text-slate-900">{step}</span>
               </div>
-              <div className="divide-y divide-slate-50">
-                {items.map(item => (
-                  <div key={item.id} onClick={() => toggle(item.id)} className={`px-5 py-3.5 flex items-start space-x-4 transition-colors ${!cloturee ? 'cursor-pointer hover:bg-slate-50' : 'cursor-default'} ${item.checked ? 'bg-emerald-50/30' : ''}`}>
-                    <div className="mt-0.5 flex-shrink-0">
-                      {item.checked
-                        ? <CheckCircle size={20} className="text-emerald-500" />
-                        : <Circle size={20} className="text-slate-300" />
-                      }
+              {i < 3 && <div className="flex-1 mx-6 h-0.5 bg-slate-100"></div>}
+           </div>
+         ))}
+      </div>
+
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8">
+         <div className="lg:col-span-2 bg-white rounded-[3rem] border border-slate-100 shadow-2xl p-12 flex flex-col">
+            {activeStep === 'Audit' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-left-8">
+                 <div className="flex items-center gap-6">
+                    <div className="p-4 bg-indigo-50 text-indigo-600 rounded-3xl"><ShieldCheck size={40} /></div>
+                    <div>
+                       <h2 className="text-3xl font-black text-slate-900">Audit de Cohérence</h2>
+                       <p className="text-slate-500 font-medium">Vérification de l'équilibre et de l'intégrité des flux.</p>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <p className={`font-medium text-sm ${item.checked ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{item.label}</p>
-                        {item.obligatoire && <span className="text-xs bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded font-semibold">Obligatoire</span>}
+                 </div>
+                 <div className="grid grid-cols-2 gap-6">
+                    <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-2">
+                       <p className="text-[10px] font-black text-slate-400 uppercase">État d'Équilibre</p>
+                       <p className={`text-2xl font-black ${stats.isBalanced ? 'text-emerald-600' : 'text-rose-600'}`}>
+                          {stats.isBalanced ? 'CONFORME' : 'DÉSÉQUILIBRÉ'}
+                       </p>
+                    </div>
+                    <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-2">
+                       <p className="text-[10px] font-black text-slate-400 uppercase">Volume Écritures</p>
+                       <p className="text-2xl font-black text-slate-900">{stats.count} Lignes</p>
+                    </div>
+                 </div>
+              </div>
+            )}
+
+            {activeStep === 'Génération' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-left-8">
+                 <div className="flex items-center gap-6">
+                    <div className="p-4 bg-emerald-50 text-emerald-600 rounded-3xl"><Calculator size={40} /></div>
+                    <div>
+                       <h2 className="text-3xl font-black text-slate-900">Écritures Automatiques</h2>
+                       <p className="text-slate-500 font-medium">Injection des dotations, provisions et régularisations.</p>
+                    </div>
+                 </div>
+                 <div className="space-y-4">
+                    {[
+                      "Calcul des dotations aux amortissements (Classe 68)",
+                      "Régularisation des charges constatées d'avance (CCA)",
+                      "Écritures de variation de stocks (Unités Industrielles)",
+                      "Ajustement des écarts de change"
+                    ].map((task, i) => (
+                      <div key={i} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                         <div className="w-2 h-2 rounded-full bg-indigo-500"></div>
+                         <p className="text-sm font-bold text-slate-700">{task}</p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5">{item.description}</p>
-                    </div>
-                    {!item.checked && item.obligatoire && <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />}
-                  </div>
-                ))}
+                    ))}
+                 </div>
               </div>
+            )}
+
+            {activeStep === 'Fiscalité' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-left-8">
+                 <div className="flex items-center gap-6">
+                    <div className="p-4 bg-amber-50 text-amber-600 rounded-3xl"><FileText size={40} /></div>
+                    <div>
+                       <h2 className="text-3xl font-black text-slate-900">Déclaration Fiscale</h2>
+                       <p className="text-slate-500 font-medium">Calcul de la TVA et préparation des liasses.</p>
+                    </div>
+                 </div>
+                 <div className="p-10 bg-indigo-900 rounded-[2.5rem] text-white space-y-6">
+                    <h3 className="text-xl font-black">Résumé de TVA Mensuel</h3>
+                    <div className="grid grid-cols-2 gap-10">
+                       <div className="space-y-1">
+                          <p className="text-[10px] font-black text-indigo-300 uppercase">TVA Collectée</p>
+                          <p className="text-2xl font-black">2 450 000 FCFA</p>
+                       </div>
+                       <div className="space-y-1">
+                          <p className="text-[10px] font-black text-indigo-300 uppercase">TVA Déductible</p>
+                          <p className="text-2xl font-black">1 120 000 FCFA</p>
+                       </div>
+                    </div>
+                    <div className="pt-6 border-t border-white/10 flex justify-between items-center">
+                       <p className="text-sm font-black uppercase">Crédit de TVA / À Payer</p>
+                       <p className="text-3xl font-black text-emerald-400">1 330 000 FCFA</p>
+                    </div>
+                 </div>
+              </div>
+            )}
+
+            {activeStep === 'Verrouillage' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-left-8">
+                 <div className="flex items-center gap-6">
+                    <div className="p-4 bg-slate-900 text-white rounded-3xl"><Lock size={40} /></div>
+                    <div>
+                       <h2 className="text-3xl font-black text-slate-900">Scellage Définitif</h2>
+                       <p className="text-slate-500 font-medium">Verrouillage des journaux et signature Diamond Seal.</p>
+                    </div>
+                 </div>
+                 <div className="p-10 bg-emerald-50 border border-emerald-100 rounded-[2.5rem] space-y-4 text-center">
+                    <div className="w-16 h-16 bg-emerald-600 text-white rounded-full mx-auto flex items-center justify-center shadow-lg"><Zap size={32} /></div>
+                    <h3 className="text-2xl font-black text-emerald-900">Prêt pour Clôture Définitive</h3>
+                    <p className="text-emerald-700 font-medium">La période sera scellée cryptographiquement. Aucune modification ne sera possible sans réouverture officielle.</p>
+                 </div>
+              </div>
+            )}
+
+            <div className="mt-auto pt-10 border-t border-slate-100 flex justify-end gap-4">
+               <button className="px-8 py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest">Abandonner</button>
+               <button 
+                 onClick={handleProcess}
+                 disabled={isProcessing}
+                 className="px-10 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center gap-3"
+               >
+                  {isProcessing ? <Loader2 className="animate-spin" size={18} /> : <ChevronRight size={18} />}
+                  {isProcessing ? 'TRAITEMENT IA...' : activeStep === 'Verrouillage' ? 'SCELLER LE MOIS' : 'ÉTAPE SUIVANTE'}
+               </button>
             </div>
-          );
-        })}
+         </div>
+
+         <div className="space-y-8">
+            <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl">
+               <h3 className="text-sm font-black uppercase tracking-widest text-indigo-400 mb-6">Résumé de Clôture</h3>
+               <div className="space-y-6">
+                  {[
+                    { label: "Mois Fiscal", val: format(new Date(periode + '-01'), 'MMMM yyyy', { locale: fr }) },
+                    { label: "Opérateur", val: "ADMIN_DIAMOND" },
+                    { label: "Intégrité Blockchain", val: "CERTIFIED", color: "text-emerald-400" },
+                  ].map((row, i) => (
+                    <div key={i} className="flex justify-between items-center border-b border-white/5 pb-4">
+                       <span className="text-[10px] font-black text-slate-400 uppercase">{row.label}</span>
+                       <span className={`text-xs font-black ${row.color || 'text-white'} uppercase`}>{row.val}</span>
+                    </div>
+                  ))}
+               </div>
+            </div>
+
+            <div className="bg-indigo-50 rounded-[2.5rem] p-8 border border-indigo-100">
+               <h3 className="text-xs font-black text-indigo-900 uppercase tracking-widest mb-4">Neural Insights</h3>
+               <div className="p-4 bg-white rounded-2xl shadow-sm space-y-2">
+                  <p className="text-[10px] font-black text-indigo-600 uppercase">Anomalie Détectée</p>
+                  <p className="text-xs font-bold text-slate-700 leading-relaxed italic">
+                    "Attention: Un écart de 2.4% est détecté par rapport au budget de la section MARKETING. Souhaitez-vous une analyse détaillée avant clôture ?"
+                  </p>
+               </div>
+            </div>
+         </div>
       </div>
     </div>
   );

@@ -1,98 +1,157 @@
-import { useStore } from '../../store/useStore';
-import { TrendingUp } from 'lucide-react';
+﻿import { useStore } from '../../store/useStore';
+import { 
+  TrendingUp, TrendingDown, PieChart, Printer, 
+  Download, Sparkles, Activity, ShieldCheck, Target 
+} from 'lucide-react';
 import { useMemo } from 'react';
 
 export default function CompteResultat() {
   const currentDossierId = useStore(state => state.currentDossierId);
-  const dossiers = useStore(state => state.dossiers);
-  const currentDossier = dossiers.find(d => d.id === currentDossierId);
-  
+  const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
   const comptes = useStore(state => state.comptes).filter(c => c.dossierId === currentDossierId);
-  const lignesEcriture = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
+  const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
 
-  const stats = useMemo(() => {
-    let totalProduits = 0;
-    let totalCharges = 0;
+  const analysis = useMemo(() => {
+    let chargesExploitation = 0; let produitsExploitation = 0;
+    let chargesFinancieres = 0; let produitsFinanciers = 0;
+    let chargesExceptionnelles = 0; let produitsExceptionnels = 0;
 
-    lignesEcriture.forEach(ligne => {
-      const compte = comptes.find(c => c.id === ligne.compteGeneralId);
-      if (!compte) return;
+    lignes.forEach(ligne => {
+      const c = comptes.find(compte => compte.id === ligne.compteGeneralId || compte.numero === ligne.compteGeneralId);
+      if (!c) return;
+      const solde = ligne.debit - ligne.credit;
 
-      if (compte.numero.startsWith('7')) {
-        totalProduits += (ligne.credit - ligne.debit);
-      } else if (compte.numero.startsWith('6')) {
-        totalCharges += (ligne.debit - ligne.credit);
+      if (c.numero.startsWith('6')) {
+        if (c.numero.startsWith('65') || c.numero.startsWith('66')) chargesFinancieres += solde;
+        else if (c.numero.startsWith('67')) chargesExceptionnelles += solde;
+        else chargesExploitation += solde;
+      }
+      else if (c.numero.startsWith('7')) {
+        const prod = -solde;
+        if (c.numero.startsWith('75') || c.numero.startsWith('76')) produitsFinanciers += prod;
+        else if (c.numero.startsWith('77')) produitsExceptionnels += prod;
+        else produitsExploitation += prod;
       }
     });
 
-    const resultatNet = totalProduits - totalCharges;
+    const resExploitation = produitsExploitation - chargesExploitation;
+    const resFinancier = produitsFinanciers - chargesFinancieres;
+    const resExceptionnel = produitsExceptionnels - chargesExceptionnelles;
+    const resNet = resExploitation + resFinancier + resExceptionnel;
 
-    return { totalProduits, totalCharges, resultatNet };
-  }, [comptes, lignesEcriture]);
+    return {
+      produitsExploitation, chargesExploitation, resExploitation,
+      produitsFinanciers, chargesFinancieres, resFinancier,
+      produitsExceptionnels, chargesExceptionnelles, resExceptionnel,
+      resNet
+    };
+  }, [comptes, lignes]);
+
+  const formatCcy = (v: number) => Math.abs(v).toLocaleString('fr-FR', { minimumFractionDigits: 0 });
+
+  const ResultBadge = ({ val }: { val: number }) => (
+    <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${val >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+       {val >= 0 ? 'Bénéfice' : 'Perte'} : {formatCcy(val)}
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-slate-900 flex items-center">
-          <TrendingUp className="mr-2 text-primary" />
-          Compte de résultat
-        </h1>
-        <button 
-          onClick={() => window.print()}
-          className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 print:hidden"
-        >
-          Imprimer
+    <div className="space-y-12 p-4 animate-in fade-in duration-1000 pb-20">
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-5xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+             <div className="p-3 bg-emerald-600 rounded-2xl text-white shadow-xl">
+                <TrendingUp size={32} />
+             </div>
+             Compte de Résultat
+          </h1>
+          <p className="text-slate-500 font-medium mt-2 italic">Performance économique et rentabilité de l'exercice.</p>
+        </div>
+        <button onClick={() => window.print()} className="btn-elite flex items-center gap-3">
+           <Printer size={18} /> IMPRIMER ÉTAT
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 print:border-none print:shadow-none max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-xl font-bold uppercase">{currentDossier?.raisonSociale}</h2>
-          <h3 className="text-lg font-semibold text-slate-700 mt-2">COMPTE DE RÉSULTAT</h3>
-          <p className="text-slate-500 text-sm">Exercice clos le {currentDossier?.dateFinExercice}</p>
-        </div>
-
-        <div className="space-y-6">
-          {/* Produits */}
-          <div>
-            <h4 className="font-bold text-lg border-b-2 border-emerald-600 pb-2 mb-4 text-emerald-800">PRODUITS (Classe 7)</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between font-semibold text-slate-700">
-                <span>Chiffre d'affaires</span>
-                <span>{stats.totalProduits.toLocaleString('fr-FR')} {currentDossier?.devisePrincipale}</span>
-              </div>
-              <div className="flex justify-between font-bold text-emerald-700 border-t border-slate-200 pt-2 mt-2">
-                <span>TOTAL DES PRODUITS</span>
-                <span>{stats.totalProduits.toLocaleString('fr-FR')} {currentDossier?.devisePrincipale}</span>
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+         <div className="lg:col-span-2 space-y-10">
+            {/* Exploitation */}
+            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl p-12 space-y-10 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 opacity-5"><Activity size={100} /></div>
+               <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
+                  <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">I. Exploitation</h3>
+                  <ResultBadge val={analysis.resExploitation} />
+               </div>
+               <div className="grid grid-cols-2 gap-20">
+                  <div className="space-y-6">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Produits d'Exploitation</p>
+                     <div className="flex justify-between items-end border-b border-slate-50 pb-2">
+                        <span className="text-xs font-bold text-slate-600 italic">Ventes de marchandises / PF</span>
+                        <span className="text-lg font-black text-slate-900">{formatCcy(analysis.produitsExploitation)}</span>
+                     </div>
+                  </div>
+                  <div className="space-y-6">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Charges d'Exploitation</p>
+                     <div className="flex justify-between items-end border-b border-slate-50 pb-2">
+                        <span className="text-xs font-bold text-slate-600 italic">Achats, Services, Salaires</span>
+                        <span className="text-lg font-black text-slate-900">{formatCcy(analysis.chargesExploitation)}</span>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>
 
-          {/* Charges */}
-          <div>
-            <h4 className="font-bold text-lg border-b-2 border-rose-600 pb-2 mb-4 text-rose-800">CHARGES (Classe 6)</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between font-semibold text-slate-700">
-                <span>Total des charges d'exploitation</span>
-                <span>{stats.totalCharges.toLocaleString('fr-FR')} {currentDossier?.devisePrincipale}</span>
-              </div>
-              <div className="flex justify-between font-bold text-rose-700 border-t border-slate-200 pt-2 mt-2">
-                <span>TOTAL DES CHARGES</span>
-                <span>{stats.totalCharges.toLocaleString('fr-FR')} {currentDossier?.devisePrincipale}</span>
-              </div>
+            {/* Financier */}
+            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl p-12 space-y-10 relative overflow-hidden">
+               <div className="absolute top-0 right-0 p-8 opacity-5"><ShieldCheck size={100} /></div>
+               <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
+                  <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">II. Financier</h3>
+                  <ResultBadge val={analysis.resFinancier} />
+               </div>
+               <div className="grid grid-cols-2 gap-20">
+                  <div className="space-y-6">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Produits Financiers</p>
+                     <div className="flex justify-between items-end border-b border-slate-50 pb-2">
+                        <span className="text-xs font-bold text-slate-600 italic">Intérêts, Gains de change</span>
+                        <span className="text-lg font-black text-slate-900">{formatCcy(analysis.produitsFinanciers)}</span>
+                     </div>
+                  </div>
+                  <div className="space-y-6">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Charges Financières</p>
+                     <div className="flex justify-between items-end border-b border-slate-50 pb-2">
+                        <span className="text-xs font-bold text-slate-600 italic">Intérêts, Pertes de change</span>
+                        <span className="text-lg font-black text-slate-900">{formatCcy(analysis.chargesFinancieres)}</span>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>
 
-          {/* Resultat */}
-          <div className="mt-8 pt-6 border-t-4 border-slate-800">
-            <div className="flex justify-between items-center text-xl font-bold">
-              <span className="uppercase">RÉSULTAT NET</span>
-              <span className={stats.resultatNet >= 0 ? 'text-emerald-600' : 'text-rose-600'}>
-                {stats.resultatNet.toLocaleString('fr-FR')} {currentDossier?.devisePrincipale}
-              </span>
+            {/* Résultat Net Final */}
+            <div className="bg-slate-950 rounded-[3rem] p-12 text-white shadow-2xl flex justify-between items-center relative overflow-hidden">
+               <div className="absolute -left-10 -bottom-10 p-20 opacity-10"><Target size={200} /></div>
+               <div>
+                  <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em] mb-2">Résultat Net de l'Exercice</p>
+                  <h2 className="text-5xl font-black tracking-tighter">{formatCcy(analysis.resNet)} <span className="text-sm font-medium opacity-40">{currentDossier?.devisePrincipale}</span></h2>
+               </div>
+               <div className={`p-8 rounded-[2.5rem] border-4 ${analysis.resNet >= 0 ? 'border-emerald-500 text-emerald-400 bg-emerald-500/10' : 'border-rose-500 text-rose-400 bg-rose-500/10'}`}>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-center mb-1">Performance</p>
+                  <p className="text-2xl font-black">{analysis.resNet >= 0 ? 'EXCÉDENT' : 'DÉFICIT'}</p>
+               </div>
             </div>
-          </div>
-        </div>
+         </div>
+
+         <div className="space-y-8">
+            <div className="card-elite bg-indigo-600 text-white">
+               <h3 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2"><Sparkles size={14} /> Insights IA Joule</h3>
+               <div className="space-y-6">
+                  <div className="p-4 bg-white/10 rounded-2xl border border-white/10">
+                     <p className="text-[10px] font-black uppercase text-indigo-200 mb-2">Marge Brute</p>
+                     <p className="text-xl font-black">{((analysis.produitsExploitation - analysis.chargesExploitation) / (analysis.produitsExploitation || 1) * 100).toFixed(1)}%</p>
+                  </div>
+                  <p className="text-[10px] font-bold text-indigo-100 italic leading-relaxed">
+                     "Votre performance d'exploitation est solide. Attention toutefois à l'augmentation des charges financières."
+                  </p>
+               </div>
+            </div>
+         </div>
       </div>
     </div>
   );

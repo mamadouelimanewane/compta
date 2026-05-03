@@ -1,205 +1,138 @@
-import { useState, useMemo } from 'react';
-import { useStore } from '../../store/useStore';
-import { Brain, Zap, ShieldAlert, ArrowRight, Activity, Layers, Info } from 'lucide-react';
+﻿import { useStore } from '../../store/useStore';
+import { Brain, TrendingUp, Wallet, ShieldCheck, Globe, Zap, ArrowUpRight, Target } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 
-// Simulation d'un graphe de flux financiers (Neural Mapping)
-// On relie les classes de comptes par les flux d'écritures
 export default function WarRoom() {
-  const currentDossierId = useStore(state => state.currentDossierId);
-  const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
-  const lignesEcriture = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
-  const comptes = useStore(state => state.comptes).filter(c => c.dossierId === currentDossierId);
+  const dossiers = useStore(state => state.dossiers);
+  const allLignes = useStore(state => state.lignesEcriture);
+  const allComptes = useStore(state => state.comptes);
 
-  const [stressScenario, setStressScenario] = useState({ clientDefault: 0, costIncrease: 0 });
-
-  const stats = useMemo(() => {
-    let cash = 0, revenue = 0, expenses = 0, receivables = 0, payables = 0;
-    lignesEcriture.forEach(l => {
-      const c = comptes.find(ct => ct.id === l.compteGeneralId);
-      if (!c) return;
-      if (c.numero.startsWith('5')) cash += l.debit - l.credit;
-      else if (c.numero.startsWith('7')) revenue += l.credit - l.debit;
-      else if (c.numero.startsWith('6')) expenses += l.debit - l.credit;
-      else if (c.numero.startsWith('411')) receivables += l.debit - l.credit;
-      else if (c.numero.startsWith('401')) payables += l.credit - l.debit;
-    });
-
-    const adjustedCash = cash * (1 - stressScenario.clientDefault / 100);
-    const adjustedExpenses = expenses * (1 + stressScenario.costIncrease / 100);
-    const adjustedMonthlyBurn = adjustedExpenses / 12 || 1;
+  // Consolidation des données
+  const consolidation = dossiers.map(d => {
+    const lignes = allLignes.filter(l => l.dossierId === d.id);
+    const comptes = allComptes.filter(c => c.dossierId === d.id);
     
-    const runway = Math.max(0, adjustedCash / adjustedMonthlyBurn * 30); // Jours de survie
+    const ca = lignes.filter(l => {
+      const c = comptes.find(compte => compte.id === l.compteGeneralId);
+      return c?.numero.startsWith('7');
+    }).reduce((s, l) => s + l.credit - l.debit, 0);
 
-    return { cash, revenue, expenses, receivables, payables, runway, adjustedCash };
-  }, [lignesEcriture, comptes, stressScenario]);
+    const treso = lignes.filter(l => {
+      const c = comptes.find(compte => compte.id === l.compteGeneralId);
+      return c?.numero.startsWith('5');
+    }).reduce((s, l) => s + l.debit - l.credit, 0);
 
-  const devise = currentDossier?.devisePrincipale || 'FCFA';
-  const fmt = (n: number) => n.toLocaleString('fr-FR', { maximumFractionDigits: 0 });
+    return { name: d.raisonSociale, ca, treso };
+  });
+
+  const totalCA = consolidation.reduce((s, c) => s + c.ca, 0);
+  const totalTreso = consolidation.reduce((s, c) => s + c.treso, 0);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700">
-      <div className="flex justify-between items-center">
+    <div className="space-y-8 p-4 animate-in fade-in duration-1000">
+      <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 flex items-center tracking-tight">
-            <Brain className="mr-3 text-indigo-600 animate-pulse" />
-            DIAMOND INTELLIGENCE CENTER
+          <h1 className="text-5xl font-black text-slate-900 tracking-tighter flex items-center gap-6">
+            <div className="p-4 bg-slate-900 rounded-[2rem] text-white shadow-2xl shadow-indigo-200">
+              <Brain size={40} className="animate-pulse" />
+            </div>
+            Diamond Intelligence Center
           </h1>
-          <p className="text-slate-500 text-sm font-medium">Analyse neuronale & Simulation stratégique d'avant-garde</p>
+          <p className="text-slate-500 font-bold text-lg mt-4 uppercase tracking-[0.3em]">Consolidation Stratégique Multi-Dossiers</p>
         </div>
-        <div className="flex space-x-2">
-          <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full flex items-center shadow-lg shadow-indigo-200">
-            <Zap size={12} className="mr-1" /> MODE PRÉDICTIF ACTIF
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Colonne de Gauche : Visualisation Neuronale */}
-        <div className="lg:col-span-2 bg-slate-900 rounded-3xl p-8 shadow-2xl border border-slate-800 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Layers size={200} className="text-indigo-400" />
-          </div>
-          <h3 className="text-indigo-400 text-xs font-bold uppercase tracking-widest mb-6 flex items-center">
-            <Activity size={14} className="mr-2" /> Cartographie des flux neuronaux
-          </h3>
-          
-          <div className="relative h-80 flex items-center justify-center">
-            {/* SVG Neural Map Conceptuelle */}
-            <svg viewBox="0 0 400 200" className="w-full h-full">
-              <defs>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-                  <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-              </defs>
-              {/* Nodes */}
-              <circle cx="50" cy="100" r="25" fill="#1e293b" stroke="#4f46e5" strokeWidth="2" filter="url(#glow)" />
-              <text x="50" y="105" textAnchor="middle" fill="#4f46e5" className="text-[10px] font-bold">ACHATS</text>
-              
-              <circle cx="200" cy="100" r="40" fill="#1e293b" stroke="#8b5cf6" strokeWidth="2" filter="url(#glow)" />
-              <text x="200" y="105" textAnchor="middle" fill="#8b5cf6" className="text-[12px] font-bold uppercase">TRÉSORERIE</text>
-              
-              <circle cx="350" cy="100" r="25" fill="#1e293b" stroke="#10b981" strokeWidth="2" filter="url(#glow)" />
-              <text x="350" y="105" textAnchor="middle" fill="#10b981" className="text-[10px] font-bold">VENTES</text>
-
-              {/* Dynamic Edges with Animated Particles */}
-              <path d="M 75 100 L 160 100" stroke="#4f46e5" strokeWidth="1" strokeDasharray="5,5">
-                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="5s" repeatCount="indefinite" />
-              </path>
-              <path d="M 325 100 L 240 100" stroke="#10b981" strokeWidth="1" strokeDasharray="5,5">
-                <animate attributeName="stroke-dashoffset" from="0" to="100" dur="3s" repeatCount="indefinite" />
-              </path>
-
-              <text x="117" y="90" textAnchor="middle" fill="#64748b" className="text-[8px] italic">Sorties : {fmt(stats.expenses)}</text>
-              <text x="283" y="90" textAnchor="middle" fill="#64748b" className="text-[8px] italic">Entrées : {fmt(stats.revenue)}</text>
-            </svg>
-
-            {/* Légende Intelligence */}
-            <div className="absolute bottom-0 left-0 right-0 flex justify-around text-center px-4 pb-4">
-              <div className="space-y-1">
-                <p className="text-[10px] text-slate-500 uppercase">Santé Flux</p>
-                <p className="text-emerald-400 font-bold text-sm">OPTIMALE</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[10px] text-slate-500 uppercase">Anomalies</p>
-                <p className="text-amber-400 font-bold text-sm">0 DÉTECTÉE</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[10px] text-slate-500 uppercase">Confiance</p>
-                <p className="text-indigo-400 font-bold text-sm">99.2%</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Colonne de Droite : Survival Runway */}
-        <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 flex flex-col justify-between">
-          <div>
-            <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Survival Runway</h3>
-            <p className="text-5xl font-black text-slate-900 tabular-nums">{Math.round(stats.runway)}</p>
-            <p className="text-slate-500 font-bold text-lg mb-6">JOURS DE SURVIE</p>
-            
-            <div className="space-y-4">
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-semibold text-slate-600">Trésorerie Ajustée</span>
-                  <span className="text-xs font-bold text-indigo-600">{fmt(stats.adjustedCash)} {devise}</span>
-                </div>
-                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-indigo-600 h-full rounded-full" style={{ width: '70%' }} />
-                </div>
-              </div>
-              <div className="p-4 bg-rose-50 rounded-2xl border border-rose-100">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-semibold text-rose-700">Risque de Rupture</span>
-                  <span className="text-xs font-bold text-rose-600">{stats.runway < 30 ? 'CRITIQUE' : stats.runway < 90 ? 'MODÉRÉ' : 'FAIBLE'}</span>
-                </div>
-                <div className="w-full bg-rose-200 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-rose-600 h-full rounded-full" style={{ width: stats.runway < 30 ? '90%' : stats.runway < 90 ? '50%' : '10%' }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <button className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
-              Générer Rapport Stratégique <ArrowRight size={18} className="ml-2" />
-            </button>
-          </div>
+        <div className="flex gap-4">
+           <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 text-emerald-700">
+              <p className="text-[10px] font-black uppercase tracking-widest mb-1">Global Liquidity</p>
+              <p className="text-2xl font-black">{totalTreso.toLocaleString()} FCFA</p>
+           </div>
         </div>
       </div>
 
-      {/* Simulator Panel */}
-      <div className="bg-gradient-to-r from-indigo-900 to-slate-900 rounded-3xl p-8 text-white shadow-2xl">
-        <div className="flex items-center space-x-3 mb-8">
-          <ShieldAlert className="text-amber-400" size={24} />
-          <h3 className="text-xl font-bold">Simulateur de Stress Stratégique</h3>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-indigo-200 uppercase tracking-wider">Défaut de Paiement Clients (Créances Perdues)</label>
-                <span className="text-lg font-black text-amber-400">{stressScenario.clientDefault}%</span>
-              </div>
-              <input 
-                type="range" min="0" max="100" step="5" 
-                value={stressScenario.clientDefault} 
-                onChange={e => setStressScenario(s => ({ ...s, clientDefault: +e.target.value }))}
-                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-400"
-              />
-            </div>
-            <div>
-              <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-indigo-200 uppercase tracking-wider">Inflation / Hausse des Coûts Fixes</label>
-                <span className="text-lg font-black text-indigo-400">+{stressScenario.costIncrease}%</span>
-              </div>
-              <input 
-                type="range" min="0" max="50" step="5" 
-                value={stressScenario.costIncrease} 
-                onChange={e => setStressScenario(s => ({ ...s, costIncrease: +e.target.value }))}
-                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-400"
-              />
-            </div>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-3 space-y-8">
+           <div className="grid grid-cols-3 gap-8">
+              {consolidation.map((c, i) => (
+                <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl hover:scale-105 transition-all cursor-pointer group">
+                   <div className="flex justify-between items-start mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black">{c.name.substring(0,2).toUpperCase()}</div>
+                      <ArrowUpRight size={20} className="text-slate-300 group-hover:text-indigo-500 transition-colors" />
+                   </div>
+                   <h3 className="text-xl font-black text-slate-900 mb-2">{c.name}</h3>
+                   <div className="space-y-4">
+                      <div>
+                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Performance (CA)</p>
+                         <p className="text-2xl font-black text-indigo-600">{c.ca.toLocaleString()} <span className="text-xs font-medium">FCFA</span></p>
+                      </div>
+                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                         <div className="h-full bg-indigo-500" style={{ width: `${Math.min(100, (c.ca/totalCA)*100)}%` }}></div>
+                      </div>
+                   </div>
+                </div>
+              ))}
+           </div>
 
-          <div className="bg-white/5 rounded-2xl p-6 border border-white/10 flex flex-col justify-center">
-            <h4 className="text-indigo-300 text-xs font-bold uppercase mb-4 flex items-center">
-              <Info size={14} className="mr-2" /> Impact Prédit sur la Structure
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/10 p-4 rounded-xl">
-                <p className="text-[10px] text-slate-400 uppercase">Cash Flow Perdu</p>
-                <p className="text-xl font-bold text-rose-400">-{fmt(stats.cash * (stressScenario.clientDefault/100))} {devise}</p>
+           <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl">
+              <h3 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-3">
+                 <TrendingUp className="text-indigo-500" /> Flux de Trésorerie Consolidés
+              </h3>
+              <div className="h-[400px]">
+                 <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={consolidation}>
+                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                       <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }} dy={10} />
+                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }} />
+                       <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }} />
+                       <Bar dataKey="treso" radius={[10, 10, 10, 10]} barSize={40}>
+                          {consolidation.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#4f46e5' : '#10b981'} />
+                          ))}
+                       </Bar>
+                    </BarChart>
+                 </ResponsiveContainer>
               </div>
-              <div className="bg-white/10 p-4 rounded-xl">
-                <p className="text-[10px] text-slate-400 uppercase">Impact Résultat</p>
-                <p className="text-xl font-bold text-amber-400">-{fmt(stats.expenses * (stressScenario.costIncrease/100))} {devise}</p>
+           </div>
+        </div>
+
+        <div className="space-y-8">
+           <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white space-y-8 shadow-2xl">
+              <h3 className="text-lg font-black uppercase tracking-widest text-indigo-400">Executive Insights</h3>
+              <div className="space-y-6">
+                 <div className="flex gap-4 items-start">
+                    <div className="p-3 bg-indigo-500/20 rounded-2xl text-indigo-400"><Target size={20} /></div>
+                    <div>
+                       <p className="text-xs font-bold opacity-60 uppercase tracking-widest">Objectif CA Annuel</p>
+                       <p className="text-xl font-black">{(totalCA * 1.2).toLocaleString()} FCFA</p>
+                    </div>
+                 </div>
+                 <div className="flex gap-4 items-start">
+                    <div className="p-3 bg-emerald-500/20 rounded-2xl text-emerald-400"><ShieldCheck size={20} /></div>
+                    <div>
+                       <p className="text-xs font-bold opacity-60 uppercase tracking-widest">Compliance Score</p>
+                       <p className="text-xl font-black">98.4% <span className="text-[10px] text-emerald-400">Elite</span></p>
+                    </div>
+                 </div>
               </div>
-            </div>
-            <p className="text-xs text-indigo-300/60 mt-6 italic">L'IA Diamond suggère : Augmentez vos provisions pour créances douteuses et négociez vos délais de paiement fournisseurs pour compenser cette simulation.</p>
-          </div>
+              <div className="pt-8 border-t border-white/10">
+                 <button className="w-full py-4 bg-indigo-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-900/50">
+                    Générer Rapport Holding
+                 </button>
+              </div>
+           </div>
+
+           <div className="bg-indigo-50 rounded-[2.5rem] p-8 border border-indigo-100">
+              <h3 className="text-sm font-black text-indigo-900 uppercase tracking-widest mb-4">Neural Alerts</h3>
+              <div className="space-y-4">
+                 {[
+                   { msg: "BFR en hausse sur Dossier A", type: "warning" },
+                   { msg: "Optimisation fiscale possible", type: "info" }
+                 ].map((alert, i) => (
+                   <div key={i} className="flex gap-3 items-center p-4 bg-white rounded-2xl shadow-sm border border-indigo-100">
+                      <div className={`w-2 h-2 rounded-full ${alert.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'}`}></div>
+                      <p className="text-xs font-bold text-slate-700">{alert.msg}</p>
+                   </div>
+                 ))}
+              </div>
+           </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+﻿import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import NouveauDossier from './pages/fichier/NouveauDossier';
@@ -28,14 +28,34 @@ import CompteResultat from './pages/etat/CompteResultat';
 import Brouillard from './pages/etat/Brouillard';
 import DeclarationTVA from './pages/etat/DeclarationTVA';
 import Facturation from './pages/vente/Facturation';
-import Budget from './pages/gestion/Budget';
+import Budget from './pages/gestion/BudgetAvance';
 import Tresorerie from './pages/gestion/Tresorerie';
 import GestionUtilisateurs from './pages/admin/GestionUtilisateurs';
 import ProcureToPay from './pages/achat/ProcureToPay';
 import ClotureMensuelle from './pages/traitement/ClotureMensuelle';
 import WarRoom from './pages/innovation/WarRoom';
 import AuditIntegrite from './pages/admin/AuditIntegrite';
+import Immobilisations from './pages/structure/Immobilisations';
+import IndustrialCosting from './pages/production/IndustrialCosting';
+import SecurityHub from './pages/admin/SecurityHub';
 import UEMOACompliance from './pages/uemoa/UEMOACompliance';
+import StatistiquesGlobales from './pages/intelligence/StatistiquesGlobales';
+import Importer from './pages/fichier/Importer';
+import Exporter from './pages/fichier/Exporter';
+import MiseEnPage from './pages/fichier/MiseEnPage';
+import Imprimer from './pages/fichier/Imprimer';
+import Informations from './pages/fichier/Informations';
+import JournalTraitement from './pages/edition/JournalTraitement';
+import Collaborateurs from './pages/structure/Collaborateurs';
+import RechercheEcritures from './pages/traitement/RechercheEcritures';
+import PlanComptableEtat from './pages/etat/PlanComptableEtat';
+import JournauxEtat from './pages/etat/JournauxEtat';
+import EtatsAnalytiques from './pages/etat/EtatsAnalytiques';
+import EtatPieces from './pages/etat/EtatPieces';
+import AnalyseVentesAchats from './pages/etat/AnalyseVentesAchats';
+import SuiviTiers from './pages/etat/SuiviTiers';
+import ComparatifMultiExercices from './pages/etat/ComparatifMultiExercices';
+import RapprochementBancaireEtat from './pages/etat/RapprochementBancaireEtat';
 
 function App() {
   return (
@@ -56,6 +76,8 @@ function App() {
           <Route path="structure/banques" element={<Banques />} />
           <Route path="structure/modeles-saisie" element={<ModelesSaisie />} />
           <Route path="structure/modeles-reglement" element={<ModelesReglement />} />
+          <Route path="structure/immobilisations" element={<Immobilisations />} />
+          <Route path="structure/collaborateurs" element={<Collaborateurs />} />
           
           {/* Traitement */}
           <Route path="traitement/saisie-journal" element={<SaisieJournal />} />
@@ -67,6 +89,8 @@ function App() {
           <Route path="traitement/rapprochement" element={<RapprochementBancaire />} />
           <Route path="traitement/cloture" element={<ClotureJournaux />} />
           <Route path="traitement/fin-exercice" element={<FinExercice />} />
+          <Route path="traitement/recherche-ecritures" element={<RechercheEcritures />} />
+          <Route path="traitement/cloture-mensuelle" element={<ClotureMensuelle />} />
           
           {/* Etat */}
           <Route path="etat/balance" element={<Balance />} />
@@ -75,29 +99,43 @@ function App() {
           <Route path="etat/compte-resultat" element={<CompteResultat />} />
           <Route path="etat/brouillard" element={<Brouillard />} />
           <Route path="etat/declaration-tva" element={<DeclarationTVA />} />
+          <Route path="etat/plan-comptable" element={<PlanComptableEtat />} />
+          <Route path="etat/journaux" element={<JournauxEtat />} />
+          <Route path="etat/analytique" element={<EtatsAnalytiques />} />
+          <Route path="etat/etat-pieces" element={<EtatPieces />} />
+          <Route path="etat/analyse-ventes-achats" element={<AnalyseVentesAchats />} />
+          <Route path="etat/suivi-tiers" element={<SuiviTiers />} />
+          <Route path="etat/comparatif" element={<ComparatifMultiExercices />} />
+          <Route path="etat/rapprochement-bancaire" element={<RapprochementBancaireEtat />} />
 
           {/* Gestion Commerciale */}
           <Route path="vente/facturation" element={<Facturation />} />
+          <Route path="achat/procure-to-pay" element={<ProcureToPay />} />
+          <Route path="production/costing" element={<IndustrialCosting />} />
 
           {/* Contrôle de Gestion */}
           <Route path="gestion/budget" element={<Budget />} />
           <Route path="gestion/tresorerie" element={<Tresorerie />} />
 
-          {/* Administration */}
-          <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />
-
-          {/* Achats */}
-          <Route path="achat/procure-to-pay" element={<ProcureToPay />} />
-
-          {/* Clôture Mensuelle */}
-          <Route path="traitement/cloture-mensuelle" element={<ClotureMensuelle />} />
-
           {/* Innovation / Intelligence */}
           <Route path="intelligence/war-room" element={<WarRoom />} />
           <Route path="intelligence/audit-integrite" element={<AuditIntegrite />} />
+          <Route path="intelligence/statistiques" element={<StatistiquesGlobales />} />
+
+          {/* Administration */}
+          <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />
+          <Route path="admin/security" element={<SecurityHub />} />
 
           {/* Régional UEMOA */}
           <Route path="uemoa/compliance" element={<UEMOACompliance />} />
+
+          {/* Fichier Tools */}
+          <Route path="fichier/importer" element={<Importer />} />
+          <Route path="fichier/exporter" element={<Exporter />} />
+          <Route path="fichier/mise-en-page" element={<MiseEnPage />} />
+          <Route path="fichier/imprimer" element={<Imprimer />} />
+          <Route path="fichier/informations" element={<Informations />} />
+          <Route path="edition/journal-traitement" element={<JournalTraitement />} />
         </Route>
       </Routes>
     </Router>
@@ -105,3 +143,4 @@ function App() {
 }
 
 export default App;
+

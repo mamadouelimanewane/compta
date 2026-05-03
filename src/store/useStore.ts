@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -35,7 +35,7 @@ export interface CompteTiers {
   numero: string;
   intitule: string;
   type: 'Client' | 'Fournisseur' | 'Salarié' | 'Autre';
-  compteGeneralId: string; // The collective account (e.g., 411000 for clients)
+  compteGeneralId: string;
   adresse?: string;
   dateCreation: string;
 }
@@ -52,7 +52,7 @@ export interface LigneEcriture {
   id: string;
   dossierId: string;
   journalId: string;
-  date: string; // YYYY-MM-DD
+  date: string;
   numeroPiece: string;
   reference: string;
   compteGeneralId: string;
@@ -62,8 +62,27 @@ export interface LigneEcriture {
   credit: number;
   validee: boolean;
   lettrage?: string;
-  hash?: string; // Digital fingerprint for audit integrity
-  notes?: string; // Collaborative notes / Post-it
+  sectionAnalytique?: string;
+  hash?: string;
+  notes?: string;
+}
+
+export interface Taxe {
+  id: string;
+  dossierId: string;
+  code: string;
+  intitule: string;
+  taux: number;
+  compteRattacheId: string;
+}
+
+export interface BudgetPrevisionnel {
+  id: string;
+  dossierId: string;
+  compteGeneralId: string;
+  exercice: number;
+  montantAnnuel: number;
+  repartitionMensuelle: number[];
 }
 
 interface AppState {
@@ -72,123 +91,132 @@ interface AppState {
   comptes: CompteGeneral[];
   comptesTiers: CompteTiers[];
   journaux: Journal[];
+  taxes: Taxe[];
   lignesEcriture: LigneEcriture[];
+  budgets: BudgetPrevisionnel[];
   
-  // Actions
   setCurrentDossier: (id: string | null) => void;
   createDossier: (dossier: Omit<DossierComptable, 'id'>) => DossierComptable;
+  updateDossier: (id: string, updates: Partial<DossierComptable>) => void;
+  deleteDossier: (id: string) => void;
   addCompte: (compte: Omit<CompteGeneral, 'id' | 'dateCreation'>) => void;
+  updateCompte: (id: string, updates: Partial<CompteGeneral>) => void;
+  deleteCompte: (id: string) => void;
   addCompteTiers: (compte: Omit<CompteTiers, 'id' | 'dateCreation'>) => void;
+  updateCompteTiers: (id: string, updates: Partial<CompteTiers>) => void;
+  deleteCompteTiers: (id: string) => void;
   addJournal: (journal: Omit<Journal, 'id'>) => void;
-  addLigneEcriture: (ligne: Omit<LigneEcriture, 'id' | 'validee'>) => void;
+  updateJournal: (id: string, updates: Partial<Journal>) => void;
+  deleteJournal: (id: string) => void;
+  addTaxe: (taxe: Omit<Taxe, 'id'>) => void;
+  updateTaxe: (id: string, updates: Partial<Taxe>) => void;
+  deleteTaxe: (id: string) => void;
+  addLigneEcriture: (ligne: Omit<LigneEcriture, 'id' | 'hash'>) => void;
   updateLigneEcriture: (id: string, updates: Partial<LigneEcriture>) => void;
   deleteLigneEcriture: (id: string) => void;
+  setBudget: (budget: Omit<BudgetPrevisionnel, 'id'>) => void;
+  deleteBudget: (id: string) => void;
 }
 
 export const useStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentDossierId: null,
       dossiers: [],
       comptes: [],
       comptesTiers: [],
       journaux: [],
+      taxes: [],
       lignesEcriture: [],
-      
+      budgets: [],
+
       setCurrentDossier: (id) => set({ currentDossierId: id }),
       
-      createDossier: (dossierData) => {
-        const newDossier: DossierComptable = {
-          ...dossierData,
-          id: uuidv4(),
-        };
-        // Add default journals when creating a dossier
-        const defaultJournaux: Journal[] = [
-          { id: uuidv4(), dossierId: newDossier.id, code: 'ACH', intitule: 'Achats', type: 'Achat' },
-          { id: uuidv4(), dossierId: newDossier.id, code: 'VTE', intitule: 'Ventes', type: 'Vente' },
-          { id: uuidv4(), dossierId: newDossier.id, code: 'BQ', intitule: 'Banque', type: 'Trésorerie' },
-          { id: uuidv4(), dossierId: newDossier.id, code: 'CAIS', intitule: 'Caisse', type: 'Trésorerie' },
-          { id: uuidv4(), dossierId: newDossier.id, code: 'OD', intitule: 'Opérations Diverses', type: 'Général' },
-          { id: uuidv4(), dossierId: newDossier.id, code: 'RAN', intitule: 'A-Nouveaux', type: 'Situation' }
-        ];
-
-        set((state) => ({
-          dossiers: [...state.dossiers, newDossier],
-          journaux: [...state.journaux, ...defaultJournaux],
-          currentDossierId: newDossier.id
-        }));
+      createDossier: (d) => {
+        const newDossier = { ...d, id: uuidv4() };
+        set(state => ({ dossiers: [...state.dossiers, newDossier] }));
         return newDossier;
       },
-      
-      addCompte: (compteData) => {
-        const newCompte: CompteGeneral = {
-          ...compteData,
-          id: uuidv4(),
-          dateCreation: new Date().toISOString(),
-        };
-        set((state) => ({
-          comptes: [...state.comptes, newCompte]
+      updateDossier: (id, updates) => set(state => ({
+        dossiers: state.dossiers.map(d => d.id === id ? { ...d, ...updates } : d)
+      })),
+      deleteDossier: (id) => set(state => ({
+        dossiers: state.dossiers.filter(d => d.id !== id)
+      })),
+
+      addCompte: (c) => set(state => ({
+        comptes: [...state.comptes, { ...c, id: uuidv4(), dateCreation: new Date().toISOString() }]
+      })),
+      updateCompte: (id, u) => set(state => ({
+        comptes: state.comptes.map(c => c.id === id ? { ...c, ...u } : c)
+      })),
+      deleteCompte: (id) => set(state => ({
+        comptes: state.comptes.filter(c => c.id !== id)
+      })),
+
+      addCompteTiers: (c) => set(state => ({
+        comptesTiers: [...state.comptesTiers, { ...c, id: uuidv4(), dateCreation: new Date().toISOString() }]
+      })),
+      updateCompteTiers: (id, u) => set(state => ({
+        comptesTiers: state.comptesTiers.map(c => c.id === id ? { ...c, ...u } : c)
+      })),
+      deleteCompteTiers: (id) => set(state => ({
+        comptesTiers: state.comptesTiers.filter(c => c.id !== id)
+      })),
+
+      addJournal: (j) => set(state => ({
+        journaux: [...state.journaux, { ...j, id: uuidv4() }]
+      })),
+      updateJournal: (id, u) => set(state => ({
+        journaux: state.journaux.map(j => j.id === id ? { ...j, ...u } : j)
+      })),
+      deleteJournal: (id) => set(state => ({
+        journaux: state.journaux.filter(j => j.id !== id)
+      })),
+
+      addTaxe: (t) => set(state => ({
+        taxes: [...state.taxes, { ...t, id: uuidv4() }]
+      })),
+      updateTaxe: (id, u) => set(state => ({
+        taxes: state.taxes.map(t => t.id === id ? { ...t, ...u } : t)
+      })),
+      deleteTaxe: (id) => set(state => ({
+        taxes: state.taxes.filter(t => t.id !== id)
+      })),
+
+      addLigneEcriture: (l) => {
+        const hashBase = `${l.date}|${l.compteGeneralId}|${l.debit}|${l.credit}|${l.sectionAnalytique || ''}`;
+        const hash = btoa(hashBase);
+        set(state => ({
+          lignesEcriture: [...state.lignesEcriture, { ...l, id: uuidv4(), hash }]
         }));
       },
+      updateLigneEcriture: (id, u) => set(state => ({
+        lignesEcriture: state.lignesEcriture.map(l => l.id === id ? { ...l, ...u } : l)
+      })),
+      deleteLigneEcriture: (id) => set(state => ({
+        lignesEcriture: state.lignesEcriture.filter(l => l.id !== id)
+      })),
 
-      addCompteTiers: (compteData) => {
-        const newCompteTiers: CompteTiers = {
-          ...compteData,
-          id: uuidv4(),
-          dateCreation: new Date().toISOString(),
-        };
-        set((state) => ({
-          comptesTiers: [...state.comptesTiers, newCompteTiers]
-        }));
-      },
-
-      addJournal: (journalData) => {
-        const newJournal: Journal = {
-          ...journalData,
-          id: uuidv4()
-        };
-        set((state) => ({
-          journaux: [...state.journaux, newJournal]
-        }));
-      },
-
-      addLigneEcriture: (ligneData) => {
-        const id = uuidv4();
-        // Simple hash generation based on content
-        const content = `${ligneData.date}|${ligneData.numeroPiece}|${ligneData.compteGeneralId}|${ligneData.debit}|${ligneData.credit}|${ligneData.libelle}`;
-        let hash = 0;
-        for (let i = 0; i < content.length; i++) {
-          hash = ((hash << 5) - hash) + content.charCodeAt(i);
-          hash |= 0;
+      setBudget: (b) => set(state => {
+        const existing = state.budgets.find(exist => 
+          exist.compteGeneralId === b.compteGeneralId && 
+          exist.exercice === b.exercice && 
+          exist.dossierId === b.dossierId
+        );
+        if (existing) {
+          return {
+            budgets: state.budgets.map(exist => 
+              exist.id === existing.id ? { ...exist, ...b } : exist
+            )
+          };
         }
-        
-        const newLigne: LigneEcriture = {
-          ...ligneData,
-          id,
-          validee: false,
-          hash: Math.abs(hash).toString(16), // Store fingerprint
-        };
-        set((state) => ({
-          lignesEcriture: [...state.lignesEcriture, newLigne]
-        }));
-      },
-
-      updateLigneEcriture: (id, updates) => {
-        set((state) => ({
-          lignesEcriture: state.lignesEcriture.map(l => 
-            l.id === id ? { ...l, ...updates } : l
-          )
-        }));
-      },
-
-      deleteLigneEcriture: (id) => {
-        set((state) => ({
-          lignesEcriture: state.lignesEcriture.filter(l => l.id !== id)
-        }));
-      }
+        return { budgets: [...state.budgets, { ...b, id: uuidv4() }] };
+      }),
+      deleteBudget: (id) => set(state => ({
+        budgets: state.budgets.filter(b => b.id !== id)
+      })),
     }),
-    {
-      name: 'compta-storage',
-    }
+    { name: 'compta-storage' }
   )
 );
