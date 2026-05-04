@@ -187,6 +187,7 @@ export default function Navbar() {
                 { label: 'Personnalisation', path: '/fenetre/personnalisation' },
                 { label: 'Navigation', path: '/fenetre/navigation' },
                 { label: 'Gestion des Droits', path: '/admin/utilisateurs' },
+                { label: 'Automatisme Reporting', path: '/admin/automatisme-reporting' },
                 { label: 'Piste d\'Audit', path: '/admin/audit-logs' },
               ]} 
             />

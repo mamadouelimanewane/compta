@@ -47,6 +47,7 @@ import Stocks from './pages/gestion/Stocks';
 import GMAO from './pages/gestion/GMAO';
 import RapportInventaire from './pages/gestion/RapportInventaire';
 import FicheMaintenance from './pages/gestion/FicheMaintenance';
+import AutomatismeReporting from './pages/admin/AutomatismeReporting';
 import AuditLogs from './pages/admin/AuditLogs';
 import Importer from './pages/fichier/Importer';
 import Exporter from './pages/fichier/Exporter';
@@ -145,6 +146,7 @@ function App() {
           <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />
           <Route path="admin/security" element={<SecurityHub />} />
           <Route path="admin/audit-logs" element={<AuditLogs />} />
+          <Route path="admin/automatisme-reporting" element={<AutomatismeReporting />} />
 
           {/* Régional UEMOA & Fiscalité */}
           <Route path="uemoa/compliance" element={<UEMOACompliance />} />
