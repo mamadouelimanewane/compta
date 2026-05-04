@@ -228,9 +228,21 @@ export default function Navbar() {
         <div className="lg:hidden fixed inset-0 top-[73px] bg-black/95 backdrop-blur-xl z-[90] animate-in fade-in slide-in-from-top-4 duration-300 p-8 overflow-y-auto">
           <div className="space-y-8 pb-20">
             {[
-              { label: "Fichier", items: ["Nouveau", "Ouvrir", "Exporter", "Importer"] },
-              { label: "Traitement", items: ["Saisie Journal", "Lettrage", "Trésorerie", "Audit"] },
-              { label: "États", items: ["Balance", "Bilan", "Liasse Fiscale", "Analyse Financière"] },
+              { label: "Fichier", items: [
+                { label: "Nouveau", path: "/nouveau" },
+                { label: "Ouvrir", path: "/ouvrir" },
+                { label: "Exporter", path: "/fichier/exporter" },
+              ] },
+              { label: "Traitement", items: [
+                { label: "Saisie Journal", path: "/traitement/saisie-journal" },
+                { label: "Lettrage", path: "/traitement/lettrage" },
+                { label: "Trésorerie", path: "/gestion/tresorerie" },
+              ] },
+              { label: "États", items: [
+                { label: "Balance", path: "/etat/balance" },
+                { label: "Bilan", path: "/etat/bilan" },
+                { label: "Liasse Fiscale", path: "/etat/liasse-fiscale" },
+              ] },
             ].map((section, idx) => (
               <div key={idx} className="space-y-4">
                 <h3 className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] border-b border-white/5 pb-2">{section.label}</h3>
@@ -238,7 +250,7 @@ export default function Navbar() {
                   {section.items.map((item, iidx) => (
                     <button 
                       key={iidx}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => { navigate(item.path); setIsMobileMenuOpen(false); }}
                       className="text-left text-sm font-black text-slate-300 hover:text-white transition-colors flex items-center gap-3 uppercase tracking-widest"
                     >
                       <ChevronRight size={14} className="text-indigo-600" />
