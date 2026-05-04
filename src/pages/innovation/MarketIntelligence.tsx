@@ -10,6 +10,7 @@ import BrandHeader from '../../components/BrandHeader';
 
 export default function MarketIntelligence() {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isStressed, setIsStressed] = useState(false);
   const [marketData, setMarketData] = useState({
     avgTurnover: 500000000,
     avgMargin: 25,
@@ -23,6 +24,10 @@ export default function MarketIntelligence() {
       window.print();
       setIsGenerating(false);
     }, 1000);
+  };
+
+  const handleStressTest = () => {
+    setIsStressed(!isStressed);
   };
 
   const sectors = [
@@ -53,6 +58,12 @@ export default function MarketIntelligence() {
         </div>
         <div className="flex gap-4">
            <button 
+             onClick={handleStressTest}
+             className={`px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 transition-all shadow-xl ${isStressed ? 'bg-rose-600 text-white' : 'bg-white text-rose-600 border border-rose-100 hover:bg-rose-50'}`}
+           >
+              <AlertTriangle size={18} /> {isStressed ? 'ARRÊTER STRESS-TEST' : 'LANCER STRESS-TEST'}
+           </button>
+           <button 
              onClick={handlePrintNote}
              className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-indigo-700 transition-all shadow-xl"
            >
@@ -72,6 +83,14 @@ export default function MarketIntelligence() {
                <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2 text-indigo-600">
                   <Database size={18} /> Données de Marché
                </h3>
+               {isStressed && (
+                 <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl space-y-2 animate-pulse">
+                    <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest flex items-center gap-2">
+                       <Zap size={12} /> SCÉNARIO DE CRISE ACTIF
+                    </p>
+                    <p className="text-[10px] font-bold text-rose-900/60 italic">Inflation +15% | Baisse Consommation -20%</p>
+                 </div>
+               )}
                <div className="space-y-6">
                   <div className="space-y-2">
                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CA Moyen Secteur</label>
@@ -114,22 +133,22 @@ export default function MarketIntelligence() {
                   <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-1000">
                      <TrendingUp size={150} />
                   </div>
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Gap Analysis IA</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Gap Analysis IA {isStressed && <span className="text-rose-600 ml-2">(Simulé en Crise)</span>}</h3>
                   <div className="space-y-8">
                      <div>
                         <div className="flex justify-between items-end mb-2">
-                           <p className="text-xs font-black text-slate-900 uppercase">Parts de Marché Relatives</p>
-                           <span className="text-xl font-black text-indigo-600">8.2%</span>
+                           <p className="text-xs font-black text-slate-900 uppercase">Résilience de Trésorerie</p>
+                           <span className={`text-xl font-black ${isStressed ? 'text-rose-600' : 'text-indigo-600'}`}>{isStressed ? 'Faible' : 'Excellente'}</span>
                         </div>
                         <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-                           <div className="h-full bg-indigo-500" style={{ width: '35%' }}></div>
+                           <div className={`h-full ${isStressed ? 'bg-rose-500' : 'bg-indigo-500'}`} style={{ width: isStressed ? '25%' : '85%' }}></div>
                         </div>
                      </div>
-                     <div className="p-6 bg-emerald-50 rounded-[2rem] border border-emerald-100 flex items-center gap-4">
-                        <Zap size={24} className="text-emerald-500" />
+                     <div className={`p-6 rounded-[2rem] border flex items-center gap-4 ${isStressed ? 'bg-rose-50 border-rose-100' : 'bg-emerald-50 border-emerald-100'}`}>
+                        {isStressed ? <AlertTriangle size={24} className="text-rose-500" /> : <Zap size={24} className="text-emerald-500" />}
                         <div>
-                           <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest">Surperformance Marge</p>
-                           <p className="text-sm font-black text-emerald-900">Votre marge est { (32 - marketData.avgMargin).toFixed(1) }% supérieure au marché.</p>
+                           <p className={`text-[10px] font-black uppercase tracking-widest ${isStressed ? 'text-rose-800' : 'text-emerald-800'}`}>{isStressed ? 'Impact Rentabilité' : 'Surperformance Marge'}</p>
+                           <p className="text-sm font-black text-slate-900">{isStressed ? 'Votre marge chuterait de 12.4% en cas de stagflation.' : `Votre marge est ${(32 - marketData.avgMargin).toFixed(1)}% supérieure au marché.`}</p>
                         </div>
                      </div>
                   </div>
