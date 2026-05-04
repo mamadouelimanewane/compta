@@ -7,7 +7,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-function MenuDropdown({ label, items }: { label: string, items: { label: string, path: string }[] }) {
+function MenuDropdown({ label, items, isConfidential }: { label: string, items: { label: string, path: string }[], isConfidential?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const timeoutRef = useRef<any>(null);
@@ -27,7 +27,8 @@ function MenuDropdown({ label, items }: { label: string, items: { label: string,
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-white hover:text-indigo-400 transition-colors py-2">
+      <button className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors py-2 ${isConfidential ? 'text-amber-400 hover:text-amber-300' : 'text-white hover:text-indigo-400'}`}>
+        {isConfidential && <ShieldCheck size={14} className="text-amber-500" />}
         {label}
         <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} />
       </button>
@@ -140,14 +141,12 @@ export default function Navbar() {
                 { label: 'Gestion de Trésorerie', path: '/gestion/tresorerie' },
                 { label: 'Mobile Money', path: '/gestion/mobile-money' },
                 { label: 'Saisie IA Joule', path: '/traitement/saisie-ia' },
-                { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },
                 { label: 'Coûts Industriels', path: '/gestion/cout-industriel' },
               ]} 
             />
             <MenuDropdown 
               label="État" 
               items={[
-                { label: 'Tableau de Bord', path: '/intelligence/statistiques' },
                 { label: 'Balance des Comptes', path: '/etat/balance' },
                 { label: 'Grand Livre', path: '/etat/grand-livre' },
                 { label: 'Bilan', path: '/etat/bilan' },
@@ -157,8 +156,18 @@ export default function Navbar() {
                 { label: 'États Analytiques', path: '/etat/analytique' },
                 { label: 'Déclaration TVA', path: '/etat/declaration-tva' },
                 { label: 'Liasse Fiscale (DSF)', path: '/etat/liasse-fiscale' },
-                { label: 'Analyse Financière', path: '/etat/analyse-financiere' },
               ]} 
+            />
+            <MenuDropdown 
+              label="Intelligence" 
+              items={[
+                { label: 'Tableau de Bord', path: '/intelligence/statistiques' },
+                { label: 'Analyse Financière', path: '/etat/analyse-financiere' },
+                { label: 'Comparatif Exercices', path: '/etat/comparatif' },
+                { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },
+                { label: 'War Room Strategic', path: '/intelligence/war-room' },
+              ]} 
+              isConfidential={true}
             />
             <MenuDropdown 
               label="Fenêtre" 
