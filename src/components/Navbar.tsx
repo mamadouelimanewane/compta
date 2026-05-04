@@ -83,33 +83,49 @@ export default function Navbar() {
             <MenuDropdown 
               label="Fichier" 
               items={[
-                { label: 'Nouveau Dossier', path: '/nouveau' },
-                { label: 'Ouvrir Dossier', path: '/ouvrir' },
-                { label: 'Paramètres Société', path: '/parametres' },
-                { label: 'Importer Données', path: '/fichier/importer' },
-                { label: 'Exporter Données', path: '/fichier/exporter' },
+                { label: 'Nouveau', path: '/nouveau' },
+                { label: 'Ouvrir', path: '/ouvrir' },
+                { label: 'Fermer', path: '/ouvrir' },
+                { label: 'Configuration', path: '/parametres' },
+                { label: 'Importer', path: '/fichier/importer' },
+                { label: 'Exporter', path: '/fichier/exporter' },
+                { label: 'Communication', path: '#' },
+                { label: 'Imprimer', path: '/fichier/imprimer' },
+                { label: 'À propos de...', path: '/fichier/informations' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="Édition" 
+              items={[
+                { label: 'Annuler', path: '#' },
+                { label: 'Couper / Copier / Coller', path: '#' },
+                { label: 'Rechercher', path: '/traitement/recherche-ecritures' },
               ]} 
             />
             <MenuDropdown 
               label="Structure" 
               items={[
-                { label: 'Plan Comptable', path: '/structure/plan-comptable' },
+                { label: 'Plan Comptable Général', path: '/structure/plan-comptable' },
                 { label: 'Plan Tiers', path: '/structure/plan-tiers' },
+                { label: 'Plan Analytique', path: '/structure/plan-analytique' },
                 { label: 'Codes Journaux', path: '/structure/codes-journaux' },
                 { label: 'Taux de Taxes', path: '/structure/taux-taxes' },
-                { label: 'Banques', path: '/structure/banques' },
                 { label: 'Modèles de Saisie', path: '/structure/modeles-saisie' },
+                { label: 'Modèles de Règlement', path: '/structure/modeles-reglement' },
+                { label: 'Paramètres Société', path: '/parametres' },
               ]} 
             />
             <MenuDropdown 
               label="Traitement" 
               items={[
-                { label: 'Saisie Journal', path: '/traitement/saisie-journal' },
                 { label: 'Saisie par Pièce', path: '/traitement/saisie-piece' },
-                { label: 'Saisie IA Joule', path: '/traitement/saisie-ia' },
+                { label: 'Saisie par Journal', path: '/traitement/saisie-journal' },
+                { label: 'Saisie par Lot', path: '/traitement/saisie-lot' },
+                { label: 'Interrogation Tiers', path: '/traitement/interrogation-tiers' },
                 { label: 'Lettrage', path: '/traitement/lettrage' },
                 { label: 'Rapprochement Bancaire', path: '/traitement/rapprochement' },
                 { label: 'Clôture Mensuelle', path: '/traitement/cloture-mensuelle' },
+                { label: 'Fin d\'Exercice', path: '/traitement/fin-exercice' },
               ]} 
             />
             <MenuDropdown 
@@ -119,7 +135,23 @@ export default function Navbar() {
                 { label: 'Grand Livre', path: '/etat/grand-livre' },
                 { label: 'Bilan', path: '/etat/bilan' },
                 { label: 'Compte de Résultat', path: '/etat/compte-resultat' },
-                { label: 'Brouillard', path: '/etat/brouillard' },
+                { label: 'Brouillard des Saisies', path: '/etat/brouillard' },
+                { label: 'Journaux', path: '/etat/journaux' },
+                { label: 'États Analytiques', path: '/etat/analytique' },
+                { label: 'Déclaration TVA', path: '/etat/declaration-tva' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="Fenêtre" 
+              items={[
+                { label: 'Personnalisation', path: '#' },
+                { label: 'Navigation', path: '#' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="Aide" 
+              items={[
+                { label: 'Aide en ligne', path: '#' },
               ]} 
             />
           </div>
