@@ -27,9 +27,9 @@ function MenuDropdown({ label, items }: { label: string, items: { label: string,
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white transition-colors py-2">
+      <button className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-white hover:text-indigo-400 transition-colors py-2">
         {label}
-        <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} />
       </button>
       
       {isOpen && (
@@ -38,7 +38,7 @@ function MenuDropdown({ label, items }: { label: string, items: { label: string,
             <button
               key={idx}
               onClick={() => { navigate(item.path); setIsOpen(false); }}
-              className="w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center justify-between group"
+              className="w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-200 hover:text-white hover:bg-white/5 transition-all flex items-center justify-between group"
             >
               {item.label}
               <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
