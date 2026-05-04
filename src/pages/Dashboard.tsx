@@ -1,17 +1,21 @@
-﻿import { useStore } from '../store/useStore';
 import { 
-  FileText, Zap, BookOpen, Clock, CheckCircle, 
-  Plus, ArrowRight, ShieldCheck, Database, LayoutDashboard,
-  Calendar, Users, Building
+  BarChart3, Users, FileText, ArrowUpRight, ArrowDownRight, 
+  Wallet, ShieldCheck, Zap, Sparkles, Database, BrainCircuit
 } from 'lucide-react';
+import { useStore } from '../store/useStore';
+import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadDemoOHADA } from '../utils/loadDemoData';
 
 export default function Dashboard() {
+  const [isSimulating, setIsSimulating] = useState(false);
   const navigate = useNavigate();
+  const dossiers = useStore(state => state.dossiers);
   const currentDossierId = useStore(state => state.currentDossierId);
-  const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
+  const addLigneEcriture = useStore(state => state.addLigneEcriture);
+  const addLog = useStore(state => state.addLog);
+  const currentDossier = dossiers.find(d => d.id === currentDossierId);
   const journaux = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId);
   const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
 
@@ -37,12 +41,23 @@ export default function Dashboard() {
              <ShieldCheck size={18} className="text-emerald-500" /> Session active : {currentDossier?.raisonSociale}
           </p>
         </div>
-        <button 
-          onClick={() => navigate('/intelligence/statistiques')}
-          className="px-8 py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-black shadow-xl transition-all"
-        >
-           <LayoutDashboard size={18} /> ACCÉDER AUX STATISTIQUES
-        </button>
+          <div className="flex gap-4">
+             <button 
+               onClick={handleSimulate}
+               disabled={isSimulating}
+               className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-indigo-200"
+             >
+                {isSimulating ? <BrainCircuit size={18} className="animate-spin" /> : <Sparkles size={18} />}
+                Lancer Simulation IA
+             </button>
+             <button 
+               onClick={() => navigate('/nouveau')}
+               className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-black shadow-xl transition-all"
+             >
+                <Plus size={18} />
+                Nouveau Dossier
+             </button>
+          </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

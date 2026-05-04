@@ -43,6 +43,8 @@ import StatistiquesGlobales from './pages/intelligence/StatistiquesGlobales';
 import SimulateurFiscal from './pages/intelligence/SimulateurFiscal';
 import DiamondMentor from './pages/intelligence/DiamondMentor';
 import ReconciliationMobile from './pages/gestion/ReconciliationMobile';
+import Stocks from './pages/gestion/Stocks';
+import GMAO from './pages/gestion/GMAO';
 import AuditLogs from './pages/admin/AuditLogs';
 import Importer from './pages/fichier/Importer';
 import Exporter from './pages/fichier/Exporter';
@@ -128,6 +130,8 @@ function App() {
           <Route path="gestion/tresorerie" element={<Tresorerie />} />
           <Route path="gestion/cout-industriel" element={<CoutIndustriel />} />
           <Route path="gestion/mobile-money" element={<ReconciliationMobile />} />
+          <Route path="gestion/stocks" element={<Stocks />} />
+          <Route path="gestion/gmao" element={<GMAO />} />
 
           {/* Innovation / Intelligence */}
           <Route path="intelligence/war-room" element={<WarRoom />} />

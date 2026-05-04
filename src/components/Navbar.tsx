@@ -133,15 +133,23 @@ export default function Navbar() {
                 { label: 'Saisie par Pièce', path: '/traitement/saisie-piece' },
                 { label: 'Saisie par Journal', path: '/traitement/saisie-journal' },
                 { label: 'Saisie par Lot', path: '/traitement/saisie-lot' },
+                { label: 'Saisie IA Joule', path: '/traitement/saisie-ia' },
                 { label: 'Interrogation Tiers', path: '/traitement/interrogation-tiers' },
                 { label: 'Lettrage', path: '/traitement/lettrage' },
                 { label: 'Rapprochement Bancaire', path: '/traitement/rapprochement' },
                 { label: 'Clôture Mensuelle', path: '/traitement/cloture-mensuelle' },
                 { label: 'Fin d\'Exercice', path: '/traitement/fin-exercice' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="Gestion" 
+              items={[
+                { label: 'Gestion des Stocks', path: '/gestion/stocks' },
+                { label: 'GMAO & Maintenance', path: '/gestion/gmao' },
                 { label: 'Gestion de Trésorerie', path: '/gestion/tresorerie' },
                 { label: 'Mobile Money', path: '/gestion/mobile-money' },
-                { label: 'Saisie IA Joule', path: '/traitement/saisie-ia' },
                 { label: 'Coûts Industriels', path: '/gestion/cout-industriel' },
+                { label: 'Budget Prévisionnel', path: '/gestion/budget' },
               ]} 
             />
             <MenuDropdown 
