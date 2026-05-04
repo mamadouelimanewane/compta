@@ -57,6 +57,8 @@ import JournauxEtat from './pages/etat/JournauxEtat';
 import EtatsAnalytiques from './pages/etat/EtatsAnalytiques';
 import EtatPieces from './pages/etat/EtatPieces';
 import AnalyseVentesAchats from './pages/etat/AnalyseVentesAchats';
+import AnalyseFinanciere from './pages/etat/AnalyseFinanciere';
+import CoutIndustriel from './pages/gestion/CoutIndustriel';
 import SuiviTiers from './pages/etat/SuiviTiers';
 import ComparatifMultiExercices from './pages/etat/ComparatifMultiExercices';
 import RapprochementBancaireEtat from './pages/etat/RapprochementBancaireEtat';
@@ -108,6 +110,7 @@ function App() {
           <Route path="etat/analytique" element={<EtatsAnalytiques />} />
           <Route path="etat/etat-pieces" element={<EtatPieces />} />
           <Route path="etat/analyse-ventes-achats" element={<AnalyseVentesAchats />} />
+          <Route path="etat/analyse-financiere" element={<AnalyseFinanciere />} />
           <Route path="etat/suivi-tiers" element={<SuiviTiers />} />
           <Route path="etat/comparatif" element={<ComparatifMultiExercices />} />
           <Route path="etat/rapprochement-bancaire" element={<RapprochementBancaireEtat />} />
@@ -119,6 +122,7 @@ function App() {
           {/* Contrôle de Gestion */}
           <Route path="gestion/budget" element={<Budget />} />
           <Route path="gestion/tresorerie" element={<Tresorerie />} />
+          <Route path="gestion/cout-industriel" element={<CoutIndustriel />} />
 
           {/* Innovation / Intelligence */}
           <Route path="intelligence/war-room" element={<WarRoom />} />

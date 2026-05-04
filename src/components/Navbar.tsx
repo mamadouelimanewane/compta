@@ -110,8 +110,10 @@ export default function Navbar() {
                 { label: 'Plan Analytique', path: '/structure/plan-analytique' },
                 { label: 'Codes Journaux', path: '/structure/codes-journaux' },
                 { label: 'Taux de Taxes', path: '/structure/taux-taxes' },
+                { label: 'Banques', path: '/structure/banques' },
                 { label: 'Modèles de Saisie', path: '/structure/modeles-saisie' },
                 { label: 'Modèles de Règlement', path: '/structure/modeles-reglement' },
+                { label: 'Immobilisations', path: '/structure/immobilisations' },
                 { label: 'Paramètres Société', path: '/parametres' },
               ]} 
             />
@@ -126,6 +128,9 @@ export default function Navbar() {
                 { label: 'Rapprochement Bancaire', path: '/traitement/rapprochement' },
                 { label: 'Clôture Mensuelle', path: '/traitement/cloture-mensuelle' },
                 { label: 'Fin d\'Exercice', path: '/traitement/fin-exercice' },
+                { label: 'Gestion de Trésorerie', path: '/gestion/tresorerie' },
+                { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },
+                { label: 'Coûts Industriels', path: '/gestion/cout-industriel' },
               ]} 
             />
             <MenuDropdown 
@@ -140,6 +145,7 @@ export default function Navbar() {
                 { label: 'États Analytiques', path: '/etat/analytique' },
                 { label: 'Déclaration TVA', path: '/etat/declaration-tva' },
                 { label: 'Liasse Fiscale (DSF)', path: '/etat/liasse-fiscale' },
+                { label: 'Analyse Financière', path: '/etat/analyse-financiere' },
               ]} 
             />
             <MenuDropdown 
