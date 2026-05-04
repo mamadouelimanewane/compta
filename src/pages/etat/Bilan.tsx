@@ -1,9 +1,4 @@
-﻿import { useStore } from '../../store/useStore';
-import { 
-  Activity, Landmark, Briefcase, TrendingUp, 
-  ShieldCheck, Printer, Download, Sparkles, LayoutDashboard 
-} from 'lucide-react';
-import { useMemo } from 'react';
+import ExportActions from '../../components/ExportActions';
 
 export default function Bilan() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -40,14 +35,30 @@ export default function Bilan() {
     });
 
     const resultatNet = totalProduits - totalCharges;
-    capitauxPropres += resultatNet;
-
-    return {
+    const statsObj = {
       actifImmo, actifCirc, tresoActif, totalActif: actifImmo + actifCirc + tresoActif,
       capitauxPropres, dettesFin, passifCirc, tresoPassif, totalPassif: capitauxPropres + dettesFin + passifCirc + tresoPassif,
       resultatNet
     };
+    
+    // For capitaux propres display we need the updated value
+    statsObj.capitauxPropres += resultatNet;
+    
+    return statsObj;
   }, [comptes, lignes]);
+
+  const exportData = useMemo(() => [
+    { Poste: 'ACTIF IMMOBILISE', Montant: stats.actifImmo },
+    { Poste: 'ACTIF CIRCULANT', Montant: stats.actifCirc },
+    { Poste: 'TRESORERIE ACTIF', Montant: stats.tresoActif },
+    { Poste: 'TOTAL ACTIF', Montant: stats.totalActif },
+    { Poste: 'CAPITAUX PROPRES', Montant: stats.capitauxPropres },
+    { Poste: 'DETTES FINANCIERES', Montant: stats.dettesFin },
+    { Poste: 'PASSIF CIRCULANT', Montant: stats.passifCirc },
+    { Poste: 'TRESORERIE PASSIF', Montant: stats.tresoPassif },
+    { Poste: 'TOTAL PASSIF', Montant: stats.totalPassif },
+    { Poste: 'RESULTAT NET', Montant: stats.resultatNet },
+  ], [stats]);
 
   const formatCcy = (v: number) => v.toLocaleString('fr-FR', { minimumFractionDigits: 0 });
 
@@ -63,11 +74,11 @@ export default function Bilan() {
           </h1>
           <p className="text-slate-500 font-medium mt-2 italic">Vision patrimoniale certifiée OHADA — Clôture Provisoire.</p>
         </div>
-        <div className="flex gap-4">
-           <button onClick={() => window.print()} className="btn-elite flex items-center gap-3">
-              <Printer size={18} /> IMPRIMER BILAN
-           </button>
-        </div>
+        <ExportActions 
+          data={exportData} 
+          filename={`bilan_${format(new Date(), 'yyyy-MM-dd')}`} 
+          title="Bilan de Situation" 
+        />
       </div>
 
       <div className="bg-white rounded-[3.5rem] border border-slate-100 shadow-2xl overflow-hidden print:border-none print:shadow-none">

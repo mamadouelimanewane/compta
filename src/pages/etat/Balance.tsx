@@ -1,11 +1,11 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
 import { 
   FileText, Download, Search, ArrowRight, Calendar, 
   ShieldCheck, TrendingUp, TrendingDown, LayoutDashboard
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import ExportActions from '../../components/ExportActions';
 
 export default function Balance() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -28,7 +28,8 @@ export default function Balance() {
       const soldeCrediteur = totalCredit > totalDebit ? totalCredit - totalDebit : 0;
       
       return {
-        compte,
+        compte: compte.numero,
+        intitule: compte.intitule,
         totalDebit,
         totalCredit,
         soldeDebiteur,
@@ -38,8 +39,8 @@ export default function Balance() {
     });
 
     return data
-      .filter(r => r.hasMovements && (r.compte.numero.includes(search) || r.compte.intitule.toLowerCase().includes(search.toLowerCase())))
-      .sort((a, b) => a.compte.numero.localeCompare(b.compte.numero));
+      .filter(r => r.hasMovements && (r.compte.includes(search) || r.intitule.toLowerCase().includes(search.toLowerCase())))
+      .sort((a, b) => a.compte.localeCompare(b.compte));
   }, [comptes, lignes, dateDebut, dateFin, search]);
 
   const aggregates = useMemo(() => {
@@ -65,9 +66,11 @@ export default function Balance() {
           </h1>
           <p className="text-slate-500 font-medium mt-2 italic">Synthèse des mouvements et arrêtés de comptes consolidés.</p>
         </div>
-        <button onClick={() => window.print()} className="btn-elite flex items-center gap-3">
-           <Download size={18} /> EXPORTER LA BALANCE
-        </button>
+        <ExportActions 
+          data={balance} 
+          filename={`balance_${format(new Date(), 'yyyy-MM-dd')}`} 
+          title="Balance Générale" 
+        />
       </div>
 
       <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-8 flex flex-wrap items-center gap-8 print:hidden">

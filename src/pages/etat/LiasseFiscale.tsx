@@ -1,5 +1,5 @@
-import { useStore } from '../../store/useStore';
-import { FileText, Download, CheckCircle, Database } from 'lucide-react';
+import { format } from 'date-fns';
+import ExportActions from '../../components/ExportActions';
 
 export default function LiasseFiscale() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -17,9 +17,11 @@ export default function LiasseFiscale() {
           </h1>
           <p className="text-slate-500 font-medium mt-2">Déclaration Statistique et Fiscale - Système Normal (SYSCOHADA Révisé).</p>
         </div>
-        <button className="px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-black shadow-xl">
-          <Download size={16} /> TÉLÉCHARGER DSF (.PDF)
-        </button>
+        <ExportActions 
+          data={[{ Info: 'Liasse Fiscale OHADA', Dossier: dossier?.raisonSociale, Date: format(new Date(), 'yyyy-MM-dd') }]} 
+          filename={`liasse_fiscale_${format(new Date(), 'yyyy-MM-dd')}`} 
+          title="Liasse Fiscale (DSF OHADA)" 
+        />
       </div>
 
       <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl space-y-8">

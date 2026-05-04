@@ -1,7 +1,5 @@
-import { useState, useMemo } from 'react';
-import { useStore } from '../../store/useStore';
-import { Calculator, Download, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import ExportActions from '../../components/ExportActions';
 
 export default function DeclarationTVA() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -49,6 +47,14 @@ export default function DeclarationTVA() {
     };
   }, [lignesEcriture, comptes, periode]);
 
+  const exportData = useMemo(() => [
+    { Libelle: "Chiffre d'affaires HT", Montant: statsTVA.caHT },
+    { Libelle: "TVA Collectée", Montant: statsTVA.tvaCollectee },
+    { Libelle: "TVA Déductible", Montant: statsTVA.tvaDeductible },
+    { Libelle: "TVA à Payer", Montant: statsTVA.tvaAPayer },
+    { Libelle: "Crédit de TVA", Montant: statsTVA.creditTVA },
+  ], [statsTVA]);
+
   const formatDevise = (montant: number) => {
     return montant.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
@@ -60,12 +66,11 @@ export default function DeclarationTVA() {
           <Calculator className="mr-2 text-primary" />
           Déclaration de TVA (Automatisée)
         </h1>
-        <button 
-          onClick={() => window.print()}
-          className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 flex items-center shadow-sm print:hidden"
-        >
-          <Download size={16} className="mr-2" /> Exporter PDF Cerfa
-        </button>
+        <ExportActions 
+          data={exportData} 
+          filename={`tva_${periode}`} 
+          title="Déclaration de TVA" 
+        />
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-wrap gap-4 items-end print:hidden">

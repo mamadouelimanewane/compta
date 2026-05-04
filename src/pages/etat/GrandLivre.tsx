@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
 import { 
   BookOpen, Download, Search, ChevronRight, 
@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import ExportActions from '../../components/ExportActions';
 
 export default function GrandLivre() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -41,6 +42,21 @@ export default function GrandLivre() {
       .sort((a, b) => a.compte.numero.localeCompare(b.compte.numero));
   }, [comptes, journaux, lignes, dateDebut, dateFin, search]);
 
+  const exportData = useMemo(() => {
+    return grandLivre.flatMap(compteData => 
+      compteData.lignes.map(l => ({
+        compte: compteData.compte.numero,
+        intitule: compteData.compte.intitule,
+        date: l.date,
+        journal: l.journal,
+        numeroPiece: l.numeroPiece,
+        libelle: l.libelle,
+        debit: l.debit,
+        credit: l.credit
+      }))
+    );
+  }, [grandLivre]);
+
   return (
     <div className="space-y-10 p-4 animate-in fade-in duration-700 h-full flex flex-col pb-20">
       <div className="flex justify-between items-end">
@@ -53,9 +69,11 @@ export default function GrandLivre() {
           </h1>
           <p className="text-slate-500 font-medium mt-2 italic">Vision exhaustive des mouvements comptables certifiés.</p>
         </div>
-        <button onClick={() => window.print()} className="btn-elite flex items-center gap-3">
-           <Download size={18} /> IMPRIMER LE REGISTRE
-        </button>
+        <ExportActions 
+          data={exportData} 
+          filename={`grand_livre_${format(new Date(), 'yyyy-MM-dd')}`} 
+          title="Grand Livre Détaillé" 
+        />
       </div>
 
       <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-8 flex flex-wrap items-center gap-8 print:hidden">

@@ -1,9 +1,11 @@
-﻿import { useStore } from '../../store/useStore';
+import { useStore } from '../../store/useStore';
 import { 
   TrendingUp, TrendingDown, PieChart, Printer, 
   Download, Sparkles, Activity, ShieldCheck, Target 
 } from 'lucide-react';
 import { useMemo } from 'react';
+import { format } from 'date-fns';
+import ExportActions from '../../components/ExportActions';
 
 export default function CompteResultat() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -47,6 +49,13 @@ export default function CompteResultat() {
     };
   }, [comptes, lignes]);
 
+  const exportData = useMemo(() => [
+    { Section: 'EXPLOITATION', Produits: analysis.produitsExploitation, Charges: analysis.chargesExploitation, Resultat: analysis.resExploitation },
+    { Section: 'FINANCIER', Produits: analysis.produitsFinanciers, Charges: analysis.chargesFinancieres, Resultat: analysis.resFinancier },
+    { Section: 'EXCEPTIONNEL', Produits: analysis.produitsExceptionnels, Charges: analysis.chargesExceptionnelles, Resultat: analysis.resExceptionnel },
+    { Section: 'TOTAL', Produits: analysis.produitsExploitation + analysis.produitsFinanciers + analysis.produitsExceptionnels, Charges: analysis.chargesExploitation + analysis.chargesFinancieres + analysis.chargesExceptionnelles, Resultat: analysis.resNet },
+  ], [analysis]);
+
   const formatCcy = (v: number) => Math.abs(v).toLocaleString('fr-FR', { minimumFractionDigits: 0 });
 
   const ResultBadge = ({ val }: { val: number }) => (
@@ -67,9 +76,11 @@ export default function CompteResultat() {
           </h1>
           <p className="text-slate-500 font-medium mt-2 italic">Performance économique et rentabilité de l'exercice.</p>
         </div>
-        <button onClick={() => window.print()} className="btn-elite flex items-center gap-3">
-           <Printer size={18} /> IMPRIMER ÉTAT
-        </button>
+        <ExportActions 
+          data={exportData} 
+          filename={`resultat_${format(new Date(), 'yyyy-MM-dd')}`} 
+          title="Compte de Résultat" 
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
