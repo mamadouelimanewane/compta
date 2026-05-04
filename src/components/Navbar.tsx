@@ -139,6 +139,7 @@ export default function Navbar() {
                 { label: 'Journaux', path: '/etat/journaux' },
                 { label: 'États Analytiques', path: '/etat/analytique' },
                 { label: 'Déclaration TVA', path: '/etat/declaration-tva' },
+                { label: 'Liasse Fiscale (DSF)', path: '/etat/liasse-fiscale' },
               ]} 
             />
             <MenuDropdown 
@@ -146,6 +147,7 @@ export default function Navbar() {
               items={[
                 { label: 'Personnalisation', path: '/fenetre/personnalisation' },
                 { label: 'Navigation', path: '/fenetre/navigation' },
+                { label: 'Gestion des Droits', path: '/admin/utilisateurs' },
               ]} 
             />
             <MenuDropdown 
