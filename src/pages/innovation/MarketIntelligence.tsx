@@ -3,16 +3,27 @@ import {
   Globe, TrendingUp, Search, Compass, 
   Target, BarChart3, ShieldCheck, Zap,
   ArrowRight, Users, ExternalLink,
-  Database, RefreshCw, AlertTriangle
+  Database, RefreshCw, AlertTriangle,
+  FileText, Download, Printer
 } from 'lucide-react';
+import BrandHeader from '../../components/BrandHeader';
 
 export default function MarketIntelligence() {
+  const [isGenerating, setIsGenerating] = useState(false);
   const [marketData, setMarketData] = useState({
     avgTurnover: 500000000,
     avgMargin: 25,
     sectorGrowth: 5.5,
     competitorsCount: 12
   });
+
+  const handlePrintNote = () => {
+    setIsGenerating(true);
+    setTimeout(() => {
+      window.print();
+      setIsGenerating(false);
+    }, 1000);
+  };
 
   const sectors = [
     { name: 'Commerce de Détail', perf: '+4.2%', color: 'text-emerald-500', trend: 'up' },
@@ -40,9 +51,18 @@ export default function MarketIntelligence() {
           </h1>
           <p className="text-slate-500 font-medium mt-2 italic">Injectez vos données de marché pour une analyse comparative personnalisée.</p>
         </div>
-        <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-all shadow-xl">
-           <RefreshCw size={18} /> RELANCER L'ANALYSE
-        </button>
+        <div className="flex gap-4">
+           <button 
+             onClick={handlePrintNote}
+             className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-indigo-700 transition-all shadow-xl"
+           >
+              {isGenerating ? <RefreshCw size={18} className="animate-spin" /> : <FileText size={18} />}
+              GÉNÉRER NOTE STRATÉGIQUE
+           </button>
+           <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:scale-105 transition-all shadow-xl">
+              <RefreshCw size={18} /> RELANCER L'ANALYSE
+           </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
@@ -154,6 +174,65 @@ export default function MarketIntelligence() {
                     </div>
                   ))}
                </div>
+            </div>
+         </div>
+      </div>
+
+      {/* Section imprimable masquée à l'écran */}
+      <div className="hidden print:block print:p-12 bg-white min-h-screen">
+         <BrandHeader title="Note de Synthèse Stratégique" subtitle="Analyse Comparative de Marché (Agnostic Deepmind)" />
+         
+         <div className="space-y-10">
+            <section className="space-y-4">
+               <h3 className="text-sm font-black border-b-2 border-slate-900 pb-2 uppercase tracking-widest">1. Résumé de l'Analyse Comparative</h3>
+               <p className="text-xs leading-relaxed text-slate-700">
+                  La présente note analyse la position compétitive de l'entreprise par rapport aux données de marché injectées ({marketData.avgTurnover.toLocaleString()} CFA de CA moyen). 
+                  L'entreprise affiche une **surperformance notable** au niveau de sa marge brute ({ (32 - marketData.avgMargin).toFixed(1) }% au-dessus du secteur).
+               </p>
+            </section>
+
+            <section className="space-y-4">
+               <h3 className="text-sm font-black border-b-2 border-slate-900 pb-2 uppercase tracking-widest">2. Matrice de Positionnement IA</h3>
+               <div className="grid grid-cols-3 gap-6">
+                  <div className="p-4 border border-slate-200 rounded-xl text-center">
+                     <p className="text-[10px] font-black uppercase text-slate-400">Efficacité</p>
+                     <p className="text-sm font-black text-indigo-600">ELITE</p>
+                  </div>
+                  <div className="p-4 border border-slate-200 rounded-xl text-center">
+                     <p className="text-[10px] font-black uppercase text-slate-400">Croissance</p>
+                     <p className="text-sm font-black text-slate-400">MOYENNE</p>
+                  </div>
+                  <div className="p-4 border border-slate-200 rounded-xl text-center">
+                     <p className="text-[10px] font-black uppercase text-slate-400">Rétention</p>
+                     <p className="text-sm font-black text-emerald-600">EXCELLENTE</p>
+                  </div>
+               </div>
+            </section>
+
+            <section className="space-y-4">
+               <h3 className="text-sm font-black border-b-2 border-slate-900 pb-2 uppercase tracking-widest">3. Recommandations Stratégiques Deepmind</h3>
+               <div className="p-6 bg-slate-50 rounded-2xl space-y-4">
+                  <div className="flex gap-4">
+                     <div className="w-2 h-2 rounded-full bg-indigo-600 mt-1.5"></div>
+                     <p className="text-xs font-bold text-slate-900 leading-relaxed">
+                        **Expansion Externe** : Au vu de votre CA actuel, vous avez un potentiel d'acquisition sur 2 concurrents directs pour consolider vos parts de marché.
+                     </p>
+                  </div>
+                  <div className="flex gap-4">
+                     <div className="w-2 h-2 rounded-full bg-indigo-600 mt-1.5"></div>
+                     <p className="text-xs font-bold text-slate-900 leading-relaxed">
+                        **Accélération de Croissance** : Le secteur croît à {marketData.sectorGrowth}%. Il est impératif d'augmenter votre investissement marketing pour ne pas perdre de terrain face aux nouveaux entrants.
+                     </p>
+                  </div>
+               </div>
+            </section>
+
+            <div className="pt-20 flex justify-between items-end border-t border-slate-100">
+               <div>
+                  <p className="text-[10px] font-black uppercase text-slate-400 mb-4">Cachet & Signature</p>
+                  <div className="w-40 h-20 border-2 border-dashed border-slate-200 rounded-xl"></div>
+               </div>
+               <p className="text-[10px] font-bold text-slate-400 italic">Généré par Diamond Deepmind Engine 1.2 - Document Confidentiel</p>
             </div>
          </div>
       </div>
