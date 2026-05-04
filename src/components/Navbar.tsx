@@ -161,6 +161,7 @@ export default function Navbar() {
                 { label: 'Balance des Comptes', path: '/etat/balance' },
                 { label: 'Grand Livre', path: '/etat/grand-livre' },
                 { label: 'Bilan', path: '/etat/bilan' },
+                { label: 'Vision 3D (Topologie)', path: '/etat/bilan-3d' },
                 { label: 'Compte de Résultat', path: '/etat/compte-resultat' },
                 { label: 'Brouillard des Saisies', path: '/etat/brouillard' },
                 { label: 'Journaux', path: '/etat/journaux' },
@@ -174,6 +175,7 @@ export default function Navbar() {
               items={[
                 { label: 'Neural Cash Flow', path: '/innovation/neural-cash-flow' },
                 { label: 'Diamond Trust Scoring', path: '/innovation/trust-scoring' },
+                { label: 'Deepmind Market Analyzer', path: '/innovation/market-intelligence' },
                 { label: 'War Room Strategic', path: '/innovation/war-room' },
               ]} 
               isInnovation={true}

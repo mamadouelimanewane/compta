@@ -24,6 +24,7 @@ import FinExercice from './pages/traitement/FinExercice';
 import Balance from './pages/etat/Balance';
 import GrandLivre from './pages/etat/GrandLivre';
 import Bilan from './pages/etat/Bilan';
+import Bilan3D from './pages/etat/Bilan3D';
 import CompteResultat from './pages/etat/CompteResultat';
 import Brouillard from './pages/etat/Brouillard';
 import DeclarationTVA from './pages/etat/DeclarationTVA';
@@ -36,6 +37,7 @@ import ClotureMensuelle from './pages/traitement/ClotureMensuelle';
 import WarRoom from './pages/innovation/WarRoom';
 import NeuralCashFlow from './pages/innovation/NeuralCashFlow';
 import TrustScoring from './pages/innovation/TrustScoring';
+import MarketIntelligence from './pages/innovation/MarketIntelligence';
 import AuditIntegrite from './pages/admin/AuditIntegrite';
 import Immobilisations from './pages/structure/Immobilisations';
 import SecurityHub from './pages/admin/SecurityHub';
@@ -113,6 +115,7 @@ function App() {
           <Route path="etat/balance" element={<Balance />} />
           <Route path="etat/grand-livre" element={<GrandLivre />} />
           <Route path="etat/bilan" element={<Bilan />} />
+          <Route path="etat/bilan-3d" element={<Bilan3D />} />
           <Route path="etat/compte-resultat" element={<CompteResultat />} />
           <Route path="etat/brouillard" element={<Brouillard />} />
           <Route path="etat/declaration-tva" element={<DeclarationTVA />} />
@@ -144,6 +147,7 @@ function App() {
           <Route path="innovation/war-room" element={<WarRoom />} />
           <Route path="innovation/neural-cash-flow" element={<NeuralCashFlow />} />
           <Route path="innovation/trust-scoring" element={<TrustScoring />} />
+          <Route path="innovation/market-intelligence" element={<MarketIntelligence />} />
           <Route path="intelligence/audit-integrite" element={<AuditIntegrite />} />
 
           {/* Administration */}
