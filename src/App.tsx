@@ -38,6 +38,8 @@ import AuditIntegrite from './pages/admin/AuditIntegrite';
 import Immobilisations from './pages/structure/Immobilisations';
 import SecurityHub from './pages/admin/SecurityHub';
 import UEMOACompliance from './pages/uemoa/UEMOACompliance';
+import LiasseFiscale from './pages/etat/LiasseFiscale';
+import StatistiquesGlobales from './pages/intelligence/StatistiquesGlobales';
 import Importer from './pages/fichier/Importer';
 import Exporter from './pages/fichier/Exporter';
 import MiseEnPage from './pages/fichier/MiseEnPage';
@@ -126,8 +128,9 @@ function App() {
           <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />
           <Route path="admin/security" element={<SecurityHub />} />
 
-          {/* Régional UEMOA */}
+          {/* Régional UEMOA & Fiscalité */}
           <Route path="uemoa/compliance" element={<UEMOACompliance />} />
+          <Route path="etat/liasse-fiscale" element={<LiasseFiscale />} />
 
           {/* Fichier Tools */}
           <Route path="fichier/importer" element={<Importer />} />
@@ -136,6 +139,9 @@ function App() {
           <Route path="fichier/imprimer" element={<Imprimer />} />
           <Route path="fichier/informations" element={<Informations />} />
           <Route path="fichier/communication" element={<Communication />} />
+          
+          {/* Intelligence & Analytics */}
+          <Route path="intelligence/statistiques" element={<StatistiquesGlobales />} />
           
           {/* Fenêtre & Aide */}
           <Route path="fenetre/personnalisation" element={<Personnalisation />} />
