@@ -77,7 +77,7 @@ export default function Exporter() {
                   {[
                     { id: 'balance', label: 'Balance des Comptes', icon: <Table /> },
                     { id: 'grand-livre', label: 'Grand Livre Détaillé', icon: <FileText /> },
-                    { id: 'journaux', label: 'Journaux d''Écritures', icon: <Table /> },
+                    { id: 'journaux', label: "Journaux d'Écritures", icon: <Table /> },
                     { id: 'fec', label: 'Fichier des Écritures (FEC)', icon: <ShieldCheck /> },
                   ].map(item => (
                     <button 
@@ -126,7 +126,7 @@ export default function Exporter() {
             <div className="pt-10 border-t border-slate-50 flex justify-end">
                <button 
                  onClick={handleExport}
-                 className="btn-elite flex items-center gap-3"
+                 className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
                >
                   <Download size={18} /> GÉNÉRER L'EXPORTATION
                </button>
@@ -158,4 +158,3 @@ export default function Exporter() {
     </div>
   );
 }
-

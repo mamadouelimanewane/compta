@@ -1,4 +1,4 @@
-﻿import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import NouveauDossier from './pages/fichier/NouveauDossier';
@@ -36,10 +36,8 @@ import ClotureMensuelle from './pages/traitement/ClotureMensuelle';
 import WarRoom from './pages/innovation/WarRoom';
 import AuditIntegrite from './pages/admin/AuditIntegrite';
 import Immobilisations from './pages/structure/Immobilisations';
-import IndustrialCosting from './pages/production/IndustrialCosting';
 import SecurityHub from './pages/admin/SecurityHub';
 import UEMOACompliance from './pages/uemoa/UEMOACompliance';
-import StatistiquesGlobales from './pages/intelligence/StatistiquesGlobales';
 import Importer from './pages/fichier/Importer';
 import Exporter from './pages/fichier/Exporter';
 import MiseEnPage from './pages/fichier/MiseEnPage';
@@ -111,7 +109,6 @@ function App() {
           {/* Gestion Commerciale */}
           <Route path="vente/facturation" element={<Facturation />} />
           <Route path="achat/procure-to-pay" element={<ProcureToPay />} />
-          <Route path="production/costing" element={<IndustrialCosting />} />
 
           {/* Contrôle de Gestion */}
           <Route path="gestion/budget" element={<Budget />} />
@@ -120,7 +117,6 @@ function App() {
           {/* Innovation / Intelligence */}
           <Route path="intelligence/war-room" element={<WarRoom />} />
           <Route path="intelligence/audit-integrite" element={<AuditIntegrite />} />
-          <Route path="intelligence/statistiques" element={<StatistiquesGlobales />} />
 
           {/* Administration */}
           <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />

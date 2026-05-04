@@ -1,4 +1,4 @@
-import { useStore } from '../../store/useStore';
+﻿import { useStore } from '../../store/useStore';
 import { Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { format, parseISO, addYears } from 'date-fns';
@@ -12,9 +12,7 @@ export default function FinExercice() {
   
   const createDossier = useStore(state => state.createDossier);
   const addCompte = useStore(state => state.addCompte);
-  const addCompteTiers = useStore(state => state.addCompteTiers);
   const addLigneEcriture = useStore(state => state.addLigneEcriture);
-  const journaux = useStore(state => state.journaux);
 
   const [etape, setEtape] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -25,7 +23,6 @@ export default function FinExercice() {
     setIsProcessing(true);
 
     setTimeout(() => {
-      // 1. Create new dossier for next year
       const startDate = parseISO(currentDossier.dateDebutExercice);
       const endDate = parseISO(currentDossier.dateFinExercice);
       
@@ -41,7 +38,6 @@ export default function FinExercice() {
         devisePrincipale: currentDossier.devisePrincipale
       });
 
-      // 2. Clone Chart of Accounts
       comptes.forEach(compte => {
         addCompte({
           dossierId: newDossier.id,
@@ -55,9 +51,7 @@ export default function FinExercice() {
         });
       });
 
-      // 3. Generate A-Nouveaux if requested
       if (genererANouveaux) {
-        // Calculate balances (only for Bilan classes 1-5)
         const balances = new Map<string, number>();
         lignesEcriture.forEach(l => {
           const compte = comptes.find(c => c.id === l.compteGeneralId);
@@ -67,7 +61,6 @@ export default function FinExercice() {
           }
         });
 
-        // Find result (Classes 6 & 7)
         let totalProduits = 0;
         let totalCharges = 0;
         lignesEcriture.forEach(l => {
@@ -79,7 +72,6 @@ export default function FinExercice() {
         });
         const resultValue = totalProduits - totalCharges;
 
-        // Find RAN journal in NEW dossier
         const newJournaux = useStore.getState().journaux.filter(j => j.dossierId === newDossier.id);
         const ranJournal = newJournaux.find(j => j.code === 'RAN');
         const newComptes = useStore.getState().comptes.filter(c => c.dossierId === newDossier.id);
@@ -97,12 +89,12 @@ export default function FinExercice() {
                 compteGeneralId: newCompte.id,
                 libelle: "Report à nouveau " + numero,
                 debit: solde > 0 ? solde : 0,
-                credit: solde < 0 ? Math.abs(solde) : 0
+                credit: solde < 0 ? Math.abs(solde) : 0,
+                validee: true
               });
             }
           });
 
-          // Add result to 131000 (Resultat net)
           const resultCompte = newComptes.find(c => c.numero === '131000');
           if (resultCompte && Math.abs(resultValue) > 0.001) {
             addLigneEcriture({
@@ -114,7 +106,8 @@ export default function FinExercice() {
               compteGeneralId: resultCompte.id,
               libelle: "Résultat net exercice précédent",
               debit: resultValue < 0 ? Math.abs(resultValue) : 0,
-              credit: resultValue > 0 ? resultValue : 0
+              credit: resultValue > 0 ? resultValue : 0,
+              validee: true
             });
           }
         }
@@ -126,10 +119,10 @@ export default function FinExercice() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <div className="space-y-6 max-w-3xl mx-auto p-4">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-slate-900 flex items-center">
-          <Calendar className="mr-2 text-primary" />
+          <Calendar className="mr-2 text-indigo-600" />
           Fin d'exercice
         </h1>
       </div>
@@ -156,7 +149,7 @@ export default function FinExercice() {
                 </div>
               </div>
               <button 
-                className="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-indigo-700 mt-4 shadow-sm"
+                className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mt-4 shadow-sm"
                 onClick={() => setEtape(2)}
               >
                 Suivant : Paramètres du nouvel exercice
@@ -193,7 +186,7 @@ export default function FinExercice() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input 
                     type="checkbox" 
-                    className="rounded text-primary focus:ring-primary w-4 h-4" 
+                    className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4" 
                     checked={genererANouveaux}
                     onChange={(e) => setGenererANouveaux(e.target.checked)}
                   />
@@ -239,12 +232,9 @@ export default function FinExercice() {
               <p className="text-slate-600 max-w-md mx-auto">
                 Le nouvel exercice a été créé et activé. Les écritures de report à nouveau ont été générées automatiquement dans le journal RAN.
               </p>
-              <div className="bg-slate-50 border border-slate-200 p-4 rounded-lg text-sm text-slate-500 mt-6 inline-block">
-                Astuce : Vous pouvez maintenant basculer sur le nouvel exercice via le menu Fichier > Ouvrir.
-              </div>
               <div className="pt-6">
                 <button 
-                  className="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-transform hover:scale-105 active:scale-95"
+                  className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg transition-transform hover:scale-105 active:scale-95"
                   onClick={() => setEtape(1)}
                 >
                   Terminer
@@ -257,4 +247,3 @@ export default function FinExercice() {
     </div>
   );
 }
-

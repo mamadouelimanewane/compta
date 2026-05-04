@@ -14,15 +14,12 @@ interface BankLine {
 export default function RapprochementBancaire() {
   const currentDossierId = useStore(state => state.currentDossierId);
   const journaux = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId && j.type === 'Trésorerie');
-  const comptes = useStore(state => state.comptes).filter(c => c.dossierId === currentDossierId);
   const lignesEcriture = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
   const updateLigneEcriture = useStore(state => state.updateLigneEcriture);
   
   const [selectedJournalId, setSelectedJournalId] = useState('');
-  const [soldeInitial, setSoldeInitial] = useState(0);
   const [soldeFinal, setSoldeFinal] = useState(0);
   
-  // Mock Bank Statement Data
   const [bankLines, setBankLines] = useState<BankLine[]>([
     { id: 'b1', date: '2026-01-20', libelle: 'VIR LOYER JANVIER', montant: -200000, matched: false },
     { id: 'b2', date: '2026-02-05', libelle: 'CHQ 123 PROSUMA', montant: 1180000, matched: false },
@@ -30,7 +27,6 @@ export default function RapprochementBancaire() {
   ]);
 
   const selectedJournal = journaux.find(j => j.id === selectedJournalId);
-  const bankCompteId = selectedJournal?.compteContrepartieId || '';
 
   const relevantLignes = useMemo(() => {
     if (!selectedJournalId) return [];
@@ -56,7 +52,6 @@ export default function RapprochementBancaire() {
 
   const handleMatch = () => {
     if (Math.abs(diff) < 0.01 && (selectedBankIds.size > 0 || selectedComptaIds.size > 0)) {
-      // Mark as matched
       selectedComptaIds.forEach(id => updateLigneEcriture(id, { rapprochee: true }));
       setBankLines(prev => prev.map(l => selectedBankIds.has(l.id) ? { ...l, matched: true } : l));
       setSelectedBankIds(new Set());
@@ -81,7 +76,7 @@ export default function RapprochementBancaire() {
   };
 
   return (
-    <div className="space-y-6 h-full flex flex-col">
+    <div className="space-y-6 h-full flex flex-col p-4">
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
@@ -135,14 +130,14 @@ export default function RapprochementBancaire() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-             <div className={lex-1 p-3 rounded-2xl flex flex-col items-center justify-center }>
+             <div className={`flex-1 p-3 rounded-2xl flex flex-col items-center justify-center ${Math.abs(diff) < 0.01 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                 <span className="text-[8px] font-black uppercase">Écart</span>
                 <span className="text-sm font-black">{diff.toLocaleString()}</span>
              </div>
              <button 
                onClick={handleMatch}
                disabled={Math.abs(diff) > 0.01 || (selectedBankIds.size === 0 && selectedComptaIds.size === 0)}
-               className={w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-lg }
+               className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-lg ${Math.abs(diff) < 0.01 && (selectedBankIds.size > 0 || selectedComptaIds.size > 0) ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-300'}`}
              >
                <CheckCircle2 size={24} />
              </button>
@@ -175,15 +170,15 @@ export default function RapprochementBancaire() {
                       if (next.has(line.id)) next.delete(line.id); else next.add(line.id);
                       setSelectedBankIds(next);
                     }}
-                    className={cursor-pointer transition-colors }
+                    className={`cursor-pointer transition-colors ${selectedBankIds.has(line.id) ? 'bg-indigo-50/50' : 'hover:bg-slate-50/50'}`}
                   >
                     <td className="px-6 py-4 text-xs font-bold text-slate-500">{format(new Date(line.date), 'dd/MM/yyyy')}</td>
                     <td className="px-6 py-4 text-xs font-black text-slate-900">{line.libelle}</td>
-                    <td className={px-6 py-4 text-xs font-black text-right }>
+                    <td className={`px-6 py-4 text-xs font-black text-right ${line.montant < 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                       {line.montant.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <div className={mx-auto w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center }>
+                      <div className={`mx-auto w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${selectedBankIds.has(line.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200'}`}>
                         {selectedBankIds.has(line.id) && <CheckCircle2 size={12} className="text-white" />}
                       </div>
                     </td>
@@ -223,15 +218,15 @@ export default function RapprochementBancaire() {
                         if (next.has(line.id)) next.delete(line.id); else next.add(line.id);
                         setSelectedComptaIds(next);
                       }}
-                      className={cursor-pointer transition-colors }
+                      className={`cursor-pointer transition-colors ${selectedComptaIds.has(line.id) ? 'bg-indigo-50/50' : 'hover:bg-slate-50/50'}`}
                     >
                       <td className="px-6 py-4 text-xs font-bold text-slate-500">{format(new Date(line.date), 'dd/MM/yyyy')}</td>
                       <td className="px-6 py-4 text-xs font-black text-slate-900">{line.libelle}</td>
-                      <td className={px-6 py-4 text-xs font-black text-right }>
+                      <td className={`px-6 py-4 text-xs font-black text-right ${(line.debit - line.credit) < 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                         {(line.debit - line.credit).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <div className={mx-auto w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center }>
+                        <div className={`mx-auto w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${selectedComptaIds.has(line.id) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-200'}`}>
                           {selectedComptaIds.has(line.id) && <CheckCircle2 size={12} className="text-white" />}
                         </div>
                       </td>
@@ -259,9 +254,9 @@ export default function RapprochementBancaire() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className={px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-3 }>
+          <div className={`px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-3 ${Math.abs(diff) < 0.01 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
             {Math.abs(diff) < 0.01 ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-            {Math.abs(diff) < 0.01 ? 'ÉQUILIBRE PARFAIT' : ÉCART : }
+            {Math.abs(diff) < 0.01 ? 'ÉQUILIBRE PARFAIT' : `ÉCART : ${diff.toLocaleString()}`}
           </div>
         </div>
       </div>

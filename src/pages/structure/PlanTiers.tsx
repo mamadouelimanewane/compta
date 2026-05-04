@@ -1,6 +1,6 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { Plus, Search, Edit2, Trash2, Users, MapPin, Landmark, Filter } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Users } from 'lucide-react';
 
 export default function PlanTiers() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -70,7 +70,7 @@ export default function PlanTiers() {
         </div>
         <button 
           onClick={handleOpenAdd}
-          className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs flex items-center gap-3 hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all active:scale-95 uppercase tracking-widest"
+          className="px-8 py-4 bg-indigo-600 text-white rounded-[1.5rem] font-black text-xs flex items-center gap-3 hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all active:scale-95 uppercase tracking-widest"
         >
           <Plus size={18} />
           AJOUTER UN TIERS
@@ -117,7 +117,7 @@ export default function PlanTiers() {
                     <td className="px-8 py-4 font-black text-slate-900 text-lg uppercase tracking-tight">{tiers.numero}</td>
                     <td className="px-8 py-4 font-bold text-slate-700">{tiers.intitule}</td>
                     <td className="px-8 py-4">
-                      <span className={px-3 py-1 rounded-lg text-[10px] font-black uppercase }>
+                      <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${tiers.type === 'Client' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'}`}>
                         {tiers.type}
                       </span>
                     </td>
@@ -125,7 +125,7 @@ export default function PlanTiers() {
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
                         <span className="text-xs font-bold text-slate-500">
-                          {compteCollectif ? ${compteCollectif.numero} : 'Non rattaché'}
+                          {compteCollectif ? `${compteCollectif.numero}` : 'Non rattaché'}
                         </span>
                       </div>
                     </td>
@@ -158,57 +158,57 @@ export default function PlanTiers() {
             <form onSubmit={handleSubmit} className="p-10 space-y-8">
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Identifiant Unique</label>
-                  <input 
-                    type="text" required
-                    className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 uppercase"
-                    value={formData.numero}
-                    onChange={e => setFormData({...formData, numero: e.target.value.toUpperCase()})}
-                  />
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Identifiant Unique</label>
+                   <input 
+                     type="text" required
+                     className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 uppercase"
+                     value={formData.numero}
+                     onChange={e => setFormData({...formData, numero: e.target.value.toUpperCase()})}
+                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Intitulé / Nom</label>
-                  <input 
-                    type="text" required
-                    className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500"
-                    value={formData.intitule}
-                    onChange={e => setFormData({...formData, intitule: e.target.value})}
-                  />
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Intitulé / Nom</label>
+                   <input 
+                     type="text" required
+                     className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500"
+                     value={formData.intitule}
+                     onChange={e => setFormData({...formData, intitule: e.target.value})}
+                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Type de tiers</label>
-                  <select 
-                    className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500"
-                    value={formData.type}
-                    onChange={e => setFormData({...formData, type: e.target.value as any})}
-                  >
-                    <option value="Client">Client</option>
-                    <option value="Fournisseur">Fournisseur</option>
-                    <option value="Salarié">Salarié</option>
-                    <option value="Autre">Autre</option>
-                  </select>
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Type de tiers</label>
+                   <select 
+                     className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500"
+                     value={formData.type}
+                     onChange={e => setFormData({...formData, type: e.target.value as any})}
+                   >
+                     <option value="Client">Client</option>
+                     <option value="Fournisseur">Fournisseur</option>
+                     <option value="Salarié">Salarié</option>
+                     <option value="Autre">Autre</option>
+                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compte Collectif rattaché</label>
-                  <select 
-                    className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500"
-                    value={formData.compteGeneralId}
-                    onChange={e => setFormData({...formData, compteGeneralId: e.target.value})}
-                  >
-                    <option value="">Sélectionner un compte collectif...</option>
-                    {dossierComptesCollectifs.map(c => (
-                      <option key={c.id} value={c.id}>{c.numero} - {c.intitule}</option>
-                    ))}
-                  </select>
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compte Collectif rattaché</label>
+                   <select 
+                     className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500"
+                     value={formData.compteGeneralId}
+                     onChange={e => setFormData({...formData, compteGeneralId: e.target.value})}
+                   >
+                     <option value="">Sélectionner un compte collectif...</option>
+                     {dossierComptesCollectifs.map(c => (
+                       <option key={c.id} value={c.id}>{c.numero} - {c.intitule}</option>
+                     ))}
+                   </select>
                 </div>
                 <div className="col-span-2 space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Adresse & Localisation</label>
-                  <textarea 
-                    rows={3}
-                    className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 resize-none"
-                    value={formData.adresse}
-                    onChange={e => setFormData({...formData, adresse: e.target.value})}
-                  />
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Adresse & Localisation</label>
+                   <textarea 
+                     rows={3}
+                     className="w-full px-5 py-4 bg-slate-100 border-none rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 resize-none"
+                     value={formData.adresse}
+                     onChange={e => setFormData({...formData, adresse: e.target.value})}
+                   />
                 </div>
               </div>
 

@@ -59,9 +59,9 @@ export default function ProcureToPay() {
         if (journalAchat && compteAchat && compteFournisseur && compteTVA) {
           const tot = totaux(b.lignes);
           const libelle = `Facture Fournisseur BC ${b.numero} — ${b.fournisseurNom}`;
-          addLigneEcriture({ dossierId: currentDossierId, journalId: journalAchat.id, date: b.date, numeroPiece: b.numero, reference: b.numero, compteGeneralId: compteAchat.id, libelle, debit: tot.ht, credit: 0 });
-          addLigneEcriture({ dossierId: currentDossierId, journalId: journalAchat.id, date: b.date, numeroPiece: b.numero, reference: b.numero, compteGeneralId: compteTVA.id, libelle: "TVA déductible", debit: tot.tva, credit: 0 });
-          addLigneEcriture({ dossierId: currentDossierId, journalId: journalAchat.id, date: b.date, numeroPiece: b.numero, reference: b.numero, compteGeneralId: compteFournisseur.id, libelle, debit: 0, credit: tot.ttc });
+          addLigneEcriture({ dossierId: currentDossierId, journalId: journalAchat.id, date: b.date, numeroPiece: b.numero, reference: b.numero, compteGeneralId: compteAchat.id, libelle, debit: tot.ht, credit: 0, validee: false });
+          addLigneEcriture({ dossierId: currentDossierId, journalId: journalAchat.id, date: b.date, numeroPiece: b.numero, reference: b.numero, compteGeneralId: compteTVA.id, libelle: "TVA déductible", debit: tot.tva, credit: 0, validee: false });
+          addLigneEcriture({ dossierId: currentDossierId, journalId: journalAchat.id, date: b.date, numeroPiece: b.numero, reference: b.numero, compteGeneralId: compteFournisseur.id, libelle, debit: 0, credit: tot.ttc, validee: false });
           alert(`✅ Écriture d'achat injectée automatiquement dans le journal ${journalAchat.code} !`);
         }
       }
@@ -123,13 +123,13 @@ export default function ProcureToPay() {
                  <div className="space-y-4">
                     {(form.lignes || []).map(l => (
                       <div key={l.id} className="grid grid-cols-12 gap-4 items-center">
-                         <input className="col-span-6 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl" placeholder="Article / Service..." value={l.description} onChange={e => setForm(f => ({ ...f, lignes: f.lignes?.map(x => x.id === l.id ? {...x, description: e.target.value} : x) }))} />
-                         <input type="number" className="col-span-2 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-center" value={l.quantite} onChange={e => setForm(f => ({ ...f, lignes: f.lignes?.map(x => x.id === l.id ? {...x, quantite: +e.target.value} : x) }))} />
-                         <input type="number" className="col-span-3 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-right" value={l.prixUnitaire} onChange={e => setForm(f => ({ ...f, lignes: f.lignes?.map(x => x.id === l.id ? {...x, prixUnitaire: +e.target.value} : x) }))} />
+                         <input className="col-span-6 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-sm" placeholder="Article / Service..." value={l.description} onChange={e => setForm(f => ({ ...f, lignes: f.lignes?.map(x => x.id === l.id ? {...x, description: e.target.value} : x) }))} />
+                         <input type="number" className="col-span-2 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-center font-black text-sm" value={l.quantite} onChange={e => setForm(f => ({ ...f, lignes: f.lignes?.map(x => x.id === l.id ? {...x, quantite: +e.target.value} : x) }))} />
+                         <input type="number" className="col-span-3 px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-right font-black text-sm" value={l.prixUnitaire} onChange={e => setForm(f => ({ ...f, lignes: f.lignes?.map(x => x.id === l.id ? {...x, prixUnitaire: +e.target.value} : x) }))} />
                          <button onClick={() => setForm(f => ({ ...f, lignes: f.lignes?.filter(x => x.id !== l.id) }))} className="col-span-1 p-2 text-rose-300 hover:text-rose-600"><Trash2 size={16} /></button>
                       </div>
                     ))}
-                    <button onClick={() => setForm(f => ({ ...f, lignes: [...(f.lignes || []), { id: uuidv4(), description: '', quantite: 1, prixUnitaire: 0, tauxTVA: 18 }] }))} className="text-xs font-black text-indigo-600 uppercase flex items-center gap-1">+ AJOUTER LIGNE</button>
+                    <button onClick={() => setForm(f => ({ ...f, lignes: [...(f.lignes || []), { id: uuidv4(), description: '', quantite: 1, prixUnitaire: 0, tauxTVA: 18 }] }))} className="text-xs font-black text-indigo-600 uppercase flex items-center gap-1 hover:underline">+ AJOUTER LIGNE</button>
                  </div>
               </div>
               <div className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 space-y-8">
@@ -143,22 +143,21 @@ export default function ProcureToPay() {
                     </div>
                  </div>
                  <div className="space-y-4">
-                    <button onClick={saveBon} className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl">GÉNÉRER LE BC</button>
-                    <button onClick={() => setShowForm(false)} className="w-full py-5 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-xs uppercase">ANNULER</button>
+                    <button onClick={saveBon} className="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:scale-[1.02] transition-all">GÉNÉRER LE BC</button>
+                    <button onClick={() => setShowForm(false)} className="w-full py-5 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-xs uppercase hover:bg-slate-50 transition-all">ANNULER</button>
                  </div>
               </div>
            </div>
         </div>
       ) : (
         <div className="flex-1 flex gap-8 overflow-hidden">
-           {/* Pipeline Kanban style pour les BC */}
            {STATUT_STEPS.map(step => (
              <div key={step} className="flex-1 flex flex-col gap-4 min-w-[280px]">
                 <div className="flex justify-between items-center px-4">
                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{step}</h3>
                    <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px] font-black">{bons.filter(b => b.statut === step).length}</span>
                 </div>
-                <div className="flex-1 space-y-4 overflow-y-auto pb-8">
+                <div className="flex-1 space-y-4 overflow-y-auto pb-8 custom-scrollbar">
                    {bons.filter(b => b.statut === step).map(b => (
                      <div key={b.id} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
                         <div className="flex justify-between items-start mb-4">

@@ -46,6 +46,7 @@ export interface Journal {
   code: string;
   intitule: string;
   type: 'Achat' | 'Vente' | 'Trésorerie' | 'Général' | 'Situation';
+  compteContrepartieId?: string;
 }
 
 export interface LigneEcriture {
@@ -61,6 +62,7 @@ export interface LigneEcriture {
   debit: number;
   credit: number;
   validee: boolean;
+  rapprochee?: boolean;
   lettrage?: string;
   sectionAnalytique?: string;
   hash?: string;
@@ -120,7 +122,7 @@ interface AppState {
 
 export const useStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       currentDossierId: null,
       dossiers: [],
       comptes: [],
@@ -161,7 +163,7 @@ export const useStore = create<AppState>()(
         comptesTiers: state.comptesTiers.map(c => c.id === id ? { ...c, ...u } : c)
       })),
       deleteCompteTiers: (id) => set(state => ({
-        comptesTiers: state.comptesTiers.filter(c => c.id !== id)
+        comptesTiers: state.comptesTiers.filter(d => d.id !== id)
       })),
 
       addJournal: (j) => set(state => ({

@@ -83,25 +83,25 @@ export const loadDemoOHADA = () => {
   const compteFourn = updatedComptes.find(c => c.numero === "401100")?.id;
 
   if (journalVenteId && compteVente && compteClient && compteTVA) {
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalVenteId, date: "2026-01-15", numeroPiece: "FA-001", reference: "Prosuma", compteGeneralId: compteClient, libelle: "Vente marchandises", debit: 1180000, credit: 0 });
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalVenteId, date: "2026-01-15", numeroPiece: "FA-001", reference: "Prosuma", compteGeneralId: compteVente, libelle: "Vente marchandises", debit: 0, credit: 1000000 });
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalVenteId, date: "2026-01-15", numeroPiece: "FA-001", reference: "Prosuma", compteGeneralId: compteTVA, libelle: "TVA 18%", debit: 0, credit: 180000 });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalVenteId, date: "2026-01-15", numeroPiece: "FA-001", reference: "Prosuma", compteGeneralId: compteClient, libelle: "Vente marchandises", debit: 1180000, credit: 0, validee: true });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalVenteId, date: "2026-01-15", numeroPiece: "FA-001", reference: "Prosuma", compteGeneralId: compteVente, libelle: "Vente marchandises", debit: 0, credit: 1000000, validee: true });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalVenteId, date: "2026-01-15", numeroPiece: "FA-001", reference: "Prosuma", compteGeneralId: compteTVA, libelle: "TVA 18%", debit: 0, credit: 180000, validee: true });
   }
 
   if (journalAchatId && compteAchat && compteFourn) {
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalAchatId, date: "2026-01-10", numeroPiece: "FA-ACH-01", reference: "Mat Info", compteGeneralId: compteAchat, libelle: "Achat PC Portable", debit: 500000, credit: 0 });
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalAchatId, date: "2026-01-10", numeroPiece: "FA-ACH-01", reference: "Mat Info", compteGeneralId: compteFourn, libelle: "Achat PC Portable", debit: 0, credit: 500000 });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalAchatId, date: "2026-01-10", numeroPiece: "FA-ACH-01", reference: "Mat Info", compteGeneralId: compteAchat, libelle: "Achat PC Portable", debit: 500000, credit: 0, validee: true });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalAchatId, date: "2026-01-10", numeroPiece: "FA-ACH-01", reference: "Mat Info", compteGeneralId: compteFourn, libelle: "Achat PC Portable", debit: 0, credit: 500000, validee: true });
   }
 
   const compteLoyer = updatedComptes.find(c => c.numero === "613000")?.id;
   if (journalBanqueId && compteLoyer && compteBanque) {
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-01-20", numeroPiece: "VIR-001", reference: "Loyer Janvier", compteGeneralId: compteLoyer, libelle: "Paiement loyer", debit: 200000, credit: 0 });
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-01-20", numeroPiece: "VIR-001", reference: "Loyer Janvier", compteGeneralId: compteBanque, libelle: "Paiement loyer", debit: 0, credit: 200000 });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-01-20", numeroPiece: "VIR-001", reference: "Loyer Janvier", compteGeneralId: compteLoyer, libelle: "Paiement loyer", debit: 200000, credit: 0, validee: true });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-01-20", numeroPiece: "VIR-001", reference: "Loyer Janvier", compteGeneralId: compteBanque, libelle: "Paiement loyer", debit: 0, credit: 200000, validee: true });
   }
 
   if (journalBanqueId && compteClient && compteBanque) {
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-02-05", numeroPiece: "CHQ-123", reference: "Paiement FA-001", compteGeneralId: compteBanque, libelle: "Encaissement Prosuma", debit: 1180000, credit: 0 });
-    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-02-05", numeroPiece: "CHQ-123", reference: "Paiement FA-001", compteGeneralId: compteClient, libelle: "Encaissement Prosuma", debit: 0, credit: 1180000 });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-02-05", numeroPiece: "CHQ-123", reference: "Paiement FA-001", compteGeneralId: compteBanque, libelle: "Encaissement Prosuma", debit: 1180000, credit: 0, validee: true });
+    store.addLigneEcriture({ dossierId: dossierId, journalId: journalBanqueId, date: "2026-02-05", numeroPiece: "CHQ-123", reference: "Paiement FA-001", compteGeneralId: compteClient, libelle: "Encaissement Prosuma", debit: 0, credit: 1180000, validee: true });
   }
 
   alert("Dossier OHADA SYSCOA 'SOCIÉTÉ D'EXEMPLE' généré avec succès !");

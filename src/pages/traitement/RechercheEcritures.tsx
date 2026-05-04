@@ -1,5 +1,5 @@
 ﻿import { useState } from 'react';
-import { Search, Search, Plus, FileDown, Filter } from 'lucide-react';
+import { Search, Plus, FileDown, Filter } from 'lucide-react';
 
 export default function RechercheEcritures() {
   return (
@@ -78,4 +78,3 @@ export default function RechercheEcritures() {
     </div>
   );
 }
-

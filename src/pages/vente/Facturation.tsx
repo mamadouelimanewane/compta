@@ -1,6 +1,6 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { Plus, FileText, Eye, Send, CheckCircle, Trash2, Search, Building, Receipt, User, Printer, Sparkles } from 'lucide-react';
+import { Plus, Eye, Send, CheckCircle, Trash2, Search, Receipt } from 'lucide-react';
 import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,11 +32,9 @@ export default function Facturation() {
   const journaux = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId);
   const comptes = useStore(state => state.comptes).filter(c => c.dossierId === currentDossierId);
   const tiers = useStore(state => state.comptesTiers).filter(t => t.dossierId === currentDossierId && t.type === 'Client');
-  const taxes = useStore(state => state.taxes).filter(t => t.dossierId === currentDossierId);
 
   const [factures, setFactures] = useState<Facture[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [previewFacture, setPreviewFacture] = useState<Facture | null>(null);
 
   const [form, setForm] = useState<Partial<Facture>>({
     date: format(new Date(), 'yyyy-MM-dd'),
@@ -72,7 +70,7 @@ export default function Facturation() {
       ...form as Facture,
       id: uuidv4(),
       dossierId: currentDossierId || '',
-      numero: FAC-,
+      numero: `FAC-${Date.now().toString().slice(-6)}`,
     };
     setFactures(f => [...f, newFacture]);
     setShowForm(false);
@@ -82,19 +80,18 @@ export default function Facturation() {
     const journalVente = journaux.find(j => j.code === 'VTE' || j.type === 'Vente');
     const compteVente = comptes.find(c => c.numero.startsWith('701'));
     const compteClientCollectif = comptes.find(c => c.numero.startsWith('411'));
-    const compteTVA = comptes.find(c => c.numero.startsWith('4457'));
+    const compteTVA = comptes.find(c => c.numero.startsWith('4431')); // Adjusted for typical OHADA TVA Ventes
     
     if (!journalVente || !compteVente || !compteClientCollectif || !compteTVA || !currentDossierId) {
-      alert("Erreur: Journaux (VTE) ou comptes (701, 411, 4457) manquants.");
+      alert("Erreur: Journaux (VTE) ou comptes (701, 411, 4431) manquants.");
       return;
     }
 
     const totalHT = facture.lignes.reduce((s, l) => s + l.quantite * l.prixUnitaire, 0);
     const totalTVA = facture.lignes.reduce((s, l) => s + l.quantite * l.prixUnitaire * l.tauxTVA / 100, 0);
     const totalTTC = totalHT + totalTVA;
-    const libelle = Facture  - ;
+    const libelle = `Facture ${facture.numero} - ${facture.clientNom}`;
 
-    // 1. Débit Client (411)
     addLigneEcriture({
       dossierId: currentDossierId,
       journalId: journalVente.id,
@@ -104,10 +101,10 @@ export default function Facturation() {
       compteGeneralId: compteClientCollectif.id,
       libelle,
       debit: totalTTC,
-      credit: 0
+      credit: 0,
+      validee: false
     });
 
-    // 2. Crédit Vente (701)
     addLigneEcriture({
       dossierId: currentDossierId,
       journalId: journalVente.id,
@@ -117,10 +114,10 @@ export default function Facturation() {
       compteGeneralId: compteVente.id,
       libelle,
       debit: 0,
-      credit: totalHT
+      credit: totalHT,
+      validee: false
     });
 
-    // 3. Crédit TVA (4457)
     if (totalTVA > 0) {
       addLigneEcriture({
         dossierId: currentDossierId,
@@ -131,7 +128,8 @@ export default function Facturation() {
         compteGeneralId: compteTVA.id,
         libelle: "TVA collectée 18%",
         debit: 0,
-        credit: totalTVA
+        credit: totalTVA,
+        validee: false
       });
     }
 
@@ -140,7 +138,7 @@ export default function Facturation() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700 h-full flex flex-col">
+    <div className="space-y-8 animate-in fade-in duration-700 h-full flex flex-col p-4">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
@@ -202,8 +200,8 @@ export default function Facturation() {
                        </button>
                     </div>
                     <div className="space-y-4">
-                       {(form.lignes || []).map((l, i) => (
-                         <div key={l.id} className="grid grid-cols-12 gap-4 items-center animate-in fade-in slide-in-from-left-4" style={{ animationDelay: ${i*100}ms }}>
+                       {(form.lignes || []).map((l) => (
+                         <div key={l.id} className="grid grid-cols-12 gap-4 items-center">
                             <div className="col-span-6">
                                <input className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl font-medium text-sm focus:ring-2 focus:ring-indigo-500" placeholder="Description..." value={l.description} onChange={e => updateLigne(l.id, 'description', e.target.value)} />
                             </div>
@@ -299,10 +297,10 @@ export default function Facturation() {
                          <td className="px-8 py-5 text-sm font-medium text-slate-500">{format(new Date(f.date), 'dd MMM yyyy')}</td>
                          <td className="px-8 py-5 text-right font-black text-slate-900">{(f.lignes.reduce((s, l) => s + l.quantite * l.prixUnitaire * 1.18, 0)).toLocaleString()}</td>
                          <td className="px-8 py-5">
-                            <span className={px-3 py-1 rounded-lg text-[10px] font-black uppercase }>
+                            <span className="px-3 py-1 bg-slate-100 rounded-lg text-[10px] font-black uppercase">
                                {f.statut}
                             </span>
-                         </td>
+                          </td>
                          <td className="px-8 py-5 text-right">
                             <div className="flex justify-end gap-2">
                                <button title="Visualiser" className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">

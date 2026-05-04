@@ -30,7 +30,7 @@ export default function Sidebar() {
     {
       title: "Comptabilité & Reporting",
       items: [
-        { label: 'Journaux d''Écritures', path: '/etat/journaux', icon: <ClipboardList size={18} /> },
+        { label: "Journaux d'Écritures", path: '/etat/journaux', icon: <ClipboardList size={18} /> },
         { label: 'Balance des Comptes', path: '/etat/balance', icon: <BarChart3 size={18} /> },
         { label: 'Grand Livre Détaillé', path: '/etat/grand-livre', icon: <Database size={18} /> },
         { label: 'Brouillard Comptable', path: '/etat/brouillard', icon: <History size={18} /> },
@@ -127,4 +127,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-

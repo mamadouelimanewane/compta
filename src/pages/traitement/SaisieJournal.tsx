@@ -1,6 +1,6 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { Plus, Trash2, Calendar as CalendarIcon, FileText, Zap, ShieldCheck } from 'lucide-react';
+import { Plus, Trash2, Zap, ShieldCheck } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function SaisieJournal() {
@@ -50,7 +50,8 @@ export default function SaisieJournal() {
       libelle: newLine.libelle,
       debit: parseFloat(newLine.debit) || 0,
       credit: parseFloat(newLine.credit) || 0,
-      sectionAnalytique: newLine.sectionAnalytique
+      sectionAnalytique: newLine.sectionAnalytique,
+      validee: false
     });
 
     setNewLine({

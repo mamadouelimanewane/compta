@@ -2,9 +2,9 @@
 import { useStore } from '../../store/useStore';
 import { 
   Landmark, FileCheck, PhoneCall, ShieldCheck, 
-  Globe, ArrowUpRight, Download, Upload, Search, 
-  CheckCircle2, AlertCircle, Zap, Loader2, FileText, 
-  TrendingUp, Activity
+  Globe, Download, 
+  CheckCircle2, AlertCircle, Loader2,
+  Activity
 } from 'lucide-react';
 
 export default function UEMOACompliance() {

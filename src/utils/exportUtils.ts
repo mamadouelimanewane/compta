@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DIAWDI Azure Elite - Universal Export Engine
  * Handles CSV (Excel compatible), PDF Print formatting and FEC (Fichier des Écritures Comptables)
  */
@@ -28,7 +28,7 @@ export const exportToCSV = (data: any[], filename: string) => {
   document.body.removeChild(link);
 };
 
-export const generateFEC = (lignes: any[], dossiers: any[], journaux: any[], comptes: any[]) => {
+export const generateFEC = (lignes: any[], _dossiers: any[], journaux: any[], comptes: any[]) => {
   const headers = [
     "JournalCode", "JournalLib", "EcritureNum", "EcritureDate", 
     "CompteNum", "CompteLib", "CompteAuxNum", "CompteAuxLib",

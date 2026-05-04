@@ -1,6 +1,6 @@
-﻿import { useState, useMemo, useEffect } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useStore } from '../../store/useStore';
-import { CheckSquare, AlertTriangle, CheckCircle, Circle, Lock, Unlock, Zap, ShieldCheck, Calculator, FileText, ChevronRight, Loader2 } from 'lucide-react';
+import { CheckCircle, Lock, Zap, ShieldCheck, Calculator, FileText, ChevronRight, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -8,7 +8,6 @@ type Step = 'Audit' | 'Génération' | 'Fiscalité' | 'Verrouillage';
 
 export default function ClotureMensuelle() {
   const currentDossierId = useStore(state => state.currentDossierId);
-  const currentDossier = useStore(state => state.dossiers).find(d => d.id === currentDossierId);
   const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
   
   const [activeStep, setActiveStep] = useState<Step>('Audit');
@@ -211,4 +210,3 @@ export default function ClotureMensuelle() {
     </div>
   );
 }
-

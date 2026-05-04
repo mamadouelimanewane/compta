@@ -4,30 +4,30 @@ import { useStore } from '../store/useStore';
 
 export default function JouleAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mesDIAWDI, setMesDIAWDI] = useState('');
+  const [message, setMessage] = useState('');
   const [history, setHistory] = useState<{ role: 'ai' | 'user', text: string, type?: 'insight' | 'warning' | 'success' }[]>([
-    { role: 'ai', text: "Bonjour ! Je suis Joule, votre assistant financier DIAWDI. Comment puis-je vous aider aujourd'hui ?", type: 'ai' }
+    { role: 'ai', text: "Bonjour ! Je suis Joule, votre assistant financier DIAWDI. Comment puis-je vous aider aujourd'hui ?", type: 'success' }
   ]);
   
   const currentDossierId = useStore(state => state.currentDossierId);
   const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
 
   const handleSend = () => {
-    if (!mesDIAWDI.trim()) return;
+    if (!message.trim()) return;
     
-    const newHistory = [...history, { role: 'user', text: mesDIAWDI } as any];
-    setHistory(newHistory);
-    setMesDIAWDI('');
+    const userMessage = message;
+    setHistory(prev => [...prev, { role: 'user', text: userMessage }]);
+    setMessage('');
 
     setTimeout(() => {
       let aiResponse = "Je n'ai pas assez de données pour répondre précisément. Essayez de me demander une analyse de ma trésorerie.";
-      let type: any = 'ai';
+      let type: any = 'insight';
 
-      if (mesDIAWDI.toLowerCase().includes('trésorerie') || mesDIAWDI.toLowerCase().includes('argent')) {
+      if (userMessage.toLowerCase().includes('trésorerie') || userMessage.toLowerCase().includes('argent')) {
         const solde = lignes.reduce((sum, l) => sum + (l.debit - l.credit), 0);
-        aiResponse = Votre solde de trésorerie actuel est de  FCFA. L'analyse prédictive indique une stabilité pour les 30 prochains jours.;
+        aiResponse = `Votre solde de trésorerie actuel est de ${solde.toLocaleString()} FCFA. L'analyse prédictive indique une stabilité pour les 30 prochains jours.`;
         type = 'insight';
-      } else if (mesDIAWDI.toLowerCase().includes('clôture')) {
+      } else if (userMessage.toLowerCase().includes('clôture')) {
         aiResponse = "La clôture annuelle est disponible dans le menu Traitement. N'oubliez pas d'imprimer votre grand-livre avant de lancer la procédure.";
         type = 'warning';
       }
@@ -57,8 +57,8 @@ export default function JouleAssistant() {
 
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {history.map((h, i) => (
-              <div key={i} className={lex }>
-                <div className={max-w-[80%] p-4 rounded-2xl text-sm }>
+              <div key={i} className={`flex ${h.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-4 rounded-2xl text-sm ${h.role === 'user' ? 'bg-indigo-600 text-white' : 'bg-white/10 text-slate-300'}`}>
                   {h.type === 'insight' && <TrendingUp size={16} className="text-emerald-400 mb-2" />}
                   {h.type === 'warning' && <AlertTriangle size={16} className="text-amber-400 mb-2" />}
                   {h.text}
@@ -72,8 +72,8 @@ export default function JouleAssistant() {
               type="text" 
               className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
               placeholder="Posez une question financière..."
-              value={mesDIAWDI}
-              onChange={(e) => setMesDIAWDI(e.target.value)}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             />
             <button 
@@ -88,7 +88,7 @@ export default function JouleAssistant() {
 
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group relative }
+        className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-2xl transition-all duration-500 hover:scale-110 active:scale-95 group relative ${isOpen ? 'bg-slate-900 text-white' : 'bg-indigo-600 text-white'}`}
       >
         {!isOpen && (
           <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-4 border-slate-50 animate-pulse"></div>
@@ -98,4 +98,3 @@ export default function JouleAssistant() {
     </div>
   );
 }
-

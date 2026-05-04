@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { Plus, Search, Edit2, Trash2, BookOpen, Filter, Download, FileText } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, BookOpen, Download } from 'lucide-react';
 
 export default function PlanComptable() {
   const currentDossierId = useStore(state => state.currentDossierId);
@@ -98,7 +98,7 @@ export default function PlanComptable() {
           </div>
           <div className="flex gap-4">
              <div className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-black text-[10px] uppercase tracking-widest">
-               {filteredComptes.length} COMPTES ACTIFS
+                {filteredComptes.length} COMPTES ACTIFS
              </div>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function PlanComptable() {
                     </span>
                   </td>
                   <td className="px-8 py-4">
-                    <span className={px-3 py-1 rounded-lg text-[10px] font-black uppercase }>
+                    <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase ${compte.type === 'Total' ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-600'}`}>
                       {compte.type}
                     </span>
                   </td>

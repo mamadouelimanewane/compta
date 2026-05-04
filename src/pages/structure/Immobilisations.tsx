@@ -50,7 +50,8 @@ export default function Immobilisations() {
       compteGeneralId: immo.compteDotationId,
       libelle: `Dotation aux amort. ${immo.intitule}`,
       debit: dotationAnnuelle,
-      credit: 0
+      credit: 0,
+      validee: true
     });
 
     addLigneEcriture({
@@ -62,7 +63,8 @@ export default function Immobilisations() {
       compteGeneralId: immo.compteAmortId,
       libelle: `Amortissement ${immo.intitule}`,
       debit: 0,
-      credit: dotationAnnuelle
+      credit: dotationAnnuelle,
+      validee: true
     });
 
     alert(`Écriture de dotation générée pour ${immo.intitule}`);
@@ -114,8 +116,8 @@ export default function Immobilisations() {
                     <p className="text-sm font-medium text-slate-600">Calcul automatique des dotations selon la norme OHADA en vigueur.</p>
                  </div>
                  <div className="space-y-4">
-                    <button onClick={() => { setImmobilisations([...immoblisations, {...form as Immobilisation, id: uuidv4()}]); setShowForm(false); }} className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl">VALIDER L'ACTIF</button>
-                    <button onClick={() => setShowForm(false)} className="w-full py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-xs uppercase">ANNULER</button>
+                    <button onClick={() => { setImmobilisations([...immoblisations, {...form as Immobilisation, id: uuidv4()}]); setShowForm(false); }} className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:scale-[1.02] transition-all">VALIDER L'ACTIF</button>
+                    <button onClick={() => setShowForm(false)} className="w-full py-4 bg-white border border-slate-200 text-slate-500 rounded-2xl font-black text-xs uppercase hover:bg-slate-50 transition-all">ANNULER</button>
                  </div>
               </div>
            </div>
@@ -136,7 +138,7 @@ export default function Immobilisations() {
           </thead>
           <tbody className="divide-y divide-slate-50">
             {immoblisations.length === 0 ? (
-               <tr><td colSpan={6} className="px-8 py-24 text-center text-slate-300 italic">Aucun actif immobilisé enregistré.</td></tr>
+               <tr><td colSpan={6} className="px-8 py-24 text-center text-slate-300 italic font-medium">Aucun actif immobilisé enregistré.</td></tr>
             ) : immoblisations.map(immo => (
               <tr key={immo.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-8 py-5">

@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useStore } from '../../store/useStore';
 import { 
   Upload, FileText, CheckCircle, AlertTriangle, 
@@ -216,7 +216,7 @@ export default function Importer() {
 
                  <div className="pt-10 border-t border-slate-50 flex justify-end">
                     <button 
-                      disabled={!file || status === 'processing'}
+                      disabled={!file}
                       onClick={startImport}
                       className={`px-12 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center gap-3 shadow-xl ${!file ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 text-white shadow-emerald-100 hover:bg-emerald-700'}`}
                     >
