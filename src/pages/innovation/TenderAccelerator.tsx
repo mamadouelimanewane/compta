@@ -9,7 +9,16 @@ import { motion } from 'framer-motion';
 
 export default function TenderAccelerator() {
   const [tenderAmount, setTenderAmount] = useState(500000000);
+  const [isAlertEnabled, setIsAlertEnabled] = useState(true);
+  const [threshold, setThreshold] = useState(90);
+  const [phoneNumber, setPhoneNumber] = useState('+221 77 XXX XX XX');
+  const [isTestSent, setIsTestSent] = useState(false);
   
+  const handleTestAlert = () => {
+    setIsTestSent(true);
+    setTimeout(() => setIsTestSent(false), 3000);
+  };
+
   const compliance = [
     { label: 'Quitus Fiscal (DGI)', status: 'Valide', date: '31/12/2024' },
     { label: 'Attestation IPRES', status: 'Valide', date: '15/06/2024' },
@@ -159,6 +168,55 @@ export default function TenderAccelerator() {
                         Compatibilité 82% <ArrowRight size={10} />
                      </p>
                   </div>
+               </div>
+            </div>
+
+            <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl space-y-8 border border-indigo-500/30 relative overflow-hidden">
+               <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl"></div>
+               
+               <h3 className="text-xs font-black uppercase tracking-widest text-indigo-400 flex items-center gap-2 relative z-10">
+                  <Bell size={18} /> Veille Stratégique SMS
+               </h3>
+
+               <div className="space-y-6 relative z-10">
+                  <div className="flex justify-between items-center">
+                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alertes SMS Actives</p>
+                     <button 
+                        onClick={() => setIsAlertEnabled(!isAlertEnabled)}
+                        className={`w-12 h-6 rounded-full transition-all relative ${isAlertEnabled ? 'bg-indigo-500' : 'bg-slate-700'}`}
+                     >
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isAlertEnabled ? 'left-7' : 'left-1'}`}></div>
+                     </button>
+                  </div>
+
+                  <div className="space-y-3">
+                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Seuil de Compatibilité : {threshold}%</p>
+                     <input 
+                        type="range" 
+                        min="50" 
+                        max="100" 
+                        value={threshold}
+                        onChange={(e) => setThreshold(Number(e.target.value))}
+                        className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-400"
+                     />
+                  </div>
+
+                  <div className="space-y-2">
+                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Numéro de Réception</p>
+                     <input 
+                        type="text" 
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs font-black text-white focus:outline-none focus:border-indigo-500"
+                     />
+                  </div>
+
+                  <button 
+                    onClick={handleTestAlert}
+                    className={`w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${isTestSent ? 'bg-emerald-500 text-white' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/20'}`}
+                  >
+                     {isTestSent ? 'SMS DE TEST ENVOYÉ !' : 'TESTER L\'ALERTE'}
+                  </button>
                </div>
             </div>
 
