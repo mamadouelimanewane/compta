@@ -1,10 +1,54 @@
-﻿import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { 
   ShieldCheck, Search, Bell, Settings, LogOut, ChevronDown, 
-  Menu, X, Sparkles, Moon, Sun, Globe, Database, Command
+  Menu, X, Sparkles, Moon, Sun, Globe, Database, Command,
+  ChevronRight
 } from 'lucide-react';
+
+function MenuDropdown({ label, items }: { label: string, items: { label: string, path: string }[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const timeoutRef = useRef<any>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
+  };
+
+  return (
+    <div 
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white transition-colors py-2">
+        {label}
+        <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="absolute top-full left-0 w-64 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200 z-[200]">
+          {items.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={() => { navigate(item.path); setIsOpen(false); }}
+              className="w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center justify-between group"
+            >
+              {item.label}
+              <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -26,14 +70,68 @@ export default function Navbar() {
     <nav className="sticky top-0 z-[100] px-8 py-4 bg-black border-b border-white/10 shadow-2xl transition-all duration-500">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
         <div className="flex items-center gap-12">
+          {/* Logo Elite */}
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-xl">
+              <ShieldCheck size={24} />
+            </div>
+            <h1 className="text-xl font-black text-white tracking-tighter">DIAWDI</h1>
+          </div>
+
+          {/* Sage-Style Menu */}
+          <div className="hidden lg:flex items-center gap-8">
+            <MenuDropdown 
+              label="Fichier" 
+              items={[
+                { label: 'Nouveau Dossier', path: '/nouveau' },
+                { label: 'Ouvrir Dossier', path: '/ouvrir' },
+                { label: 'Paramètres Société', path: '/parametres' },
+                { label: 'Importer Données', path: '/fichier/importer' },
+                { label: 'Exporter Données', path: '/fichier/exporter' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="Structure" 
+              items={[
+                { label: 'Plan Comptable', path: '/structure/plan-comptable' },
+                { label: 'Plan Tiers', path: '/structure/plan-tiers' },
+                { label: 'Codes Journaux', path: '/structure/codes-journaux' },
+                { label: 'Taux de Taxes', path: '/structure/taux-taxes' },
+                { label: 'Banques', path: '/structure/banques' },
+                { label: 'Modèles de Saisie', path: '/structure/modeles-saisie' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="Traitement" 
+              items={[
+                { label: 'Saisie Journal', path: '/traitement/saisie-journal' },
+                { label: 'Saisie par Pièce', path: '/traitement/saisie-piece' },
+                { label: 'Saisie IA Joule', path: '/traitement/saisie-ia' },
+                { label: 'Lettrage', path: '/traitement/lettrage' },
+                { label: 'Rapprochement Bancaire', path: '/traitement/rapprochement' },
+                { label: 'Clôture Mensuelle', path: '/traitement/cloture-mensuelle' },
+              ]} 
+            />
+            <MenuDropdown 
+              label="État" 
+              items={[
+                { label: 'Balance des Comptes', path: '/etat/balance' },
+                { label: 'Grand Livre', path: '/etat/grand-livre' },
+                { label: 'Bilan', path: '/etat/bilan' },
+                { label: 'Compte de Résultat', path: '/etat/compte-resultat' },
+                { label: 'Brouillard', path: '/etat/brouillard' },
+              ]} 
+            />
+          </div>
+
           {/* Search Bar Elite */}
-          <div className="relative group hidden lg:block">
+          <div className="relative group hidden xl:block">
             <input 
               type="text" 
-              placeholder="Commande rapide (Ctrl + K)"
-              className="pl-12 pr-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold w-80 shadow-inner text-white focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-500"
+              placeholder="Commande rapide..."
+              className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold w-64 text-white focus:ring-2 focus:ring-indigo-500 transition-all"
             />
-            <Command size={16} className="absolute left-4 top-3.5 text-slate-500" />
+            <Search size={14} className="absolute left-3 top-2.5 text-slate-500" />
           </div>
         </div>
 
