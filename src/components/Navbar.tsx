@@ -7,7 +7,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-function MenuDropdown({ label, items, isConfidential }: { label: string, items: { label: string, path: string }[], isConfidential?: boolean }) {
+function MenuDropdown({ label, items, isConfidential, isInnovation }: { label: string, items: { label: string, path: string }[], isConfidential?: boolean, isInnovation?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const timeoutRef = useRef<any>(null);
@@ -27,8 +27,9 @@ function MenuDropdown({ label, items, isConfidential }: { label: string, items: 
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors py-2 ${isConfidential ? 'text-amber-400 hover:text-amber-300' : 'text-white hover:text-indigo-400'}`}>
+      <button className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors py-2 ${isConfidential ? 'text-amber-400 hover:text-amber-300' : isInnovation ? 'text-indigo-400 hover:text-indigo-300' : 'text-white hover:text-indigo-400'}`}>
         {isConfidential && <ShieldCheck size={14} className="text-amber-500" />}
+        {isInnovation && <Sparkles size={14} className="text-indigo-500 animate-pulse" />}
         {label}
         <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} />
       </button>
@@ -169,6 +170,15 @@ export default function Navbar() {
               ]} 
             />
             <MenuDropdown 
+              label="Innovation" 
+              items={[
+                { label: 'Neural Cash Flow', path: '/innovation/neural-cash-flow' },
+                { label: 'Diamond Trust Scoring', path: '/innovation/trust-scoring' },
+                { label: 'War Room Strategic', path: '/innovation/war-room' },
+              ]} 
+              isInnovation={true}
+            />
+            <MenuDropdown 
               label="Intelligence" 
               items={[
                 { label: 'Tableau de Bord', path: '/intelligence/statistiques' },
@@ -177,7 +187,6 @@ export default function Navbar() {
                 { label: 'Analyse Financière', path: '/etat/analyse-financiere' },
                 { label: 'Comparatif Exercices', path: '/etat/comparatif' },
                 { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },
-                { label: 'War Room Strategic', path: '/intelligence/war-room' },
               ]} 
               isConfidential={true}
             />

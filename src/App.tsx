@@ -34,6 +34,8 @@ import GestionUtilisateurs from './pages/admin/GestionUtilisateurs';
 import ProcureToPay from './pages/achat/ProcureToPay';
 import ClotureMensuelle from './pages/traitement/ClotureMensuelle';
 import WarRoom from './pages/innovation/WarRoom';
+import NeuralCashFlow from './pages/innovation/NeuralCashFlow';
+import TrustScoring from './pages/innovation/TrustScoring';
 import AuditIntegrite from './pages/admin/AuditIntegrite';
 import Immobilisations from './pages/structure/Immobilisations';
 import SecurityHub from './pages/admin/SecurityHub';
@@ -139,7 +141,9 @@ function App() {
           <Route path="gestion/fiche-maintenance" element={<FicheMaintenance />} />
 
           {/* Innovation / Intelligence */}
-          <Route path="intelligence/war-room" element={<WarRoom />} />
+          <Route path="innovation/war-room" element={<WarRoom />} />
+          <Route path="innovation/neural-cash-flow" element={<NeuralCashFlow />} />
+          <Route path="innovation/trust-scoring" element={<TrustScoring />} />
           <Route path="intelligence/audit-integrite" element={<AuditIntegrite />} />
 
           {/* Administration */}
