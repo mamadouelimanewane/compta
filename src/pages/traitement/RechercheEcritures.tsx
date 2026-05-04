@@ -1,79 +1,63 @@
-﻿import { useState } from 'react';
-import { Search, Plus, FileDown, Filter } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Plus, FileDown, Filter, Zap, Command } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function RechercheEcritures() {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-10 p-4 animate-in fade-in duration-700 h-full flex flex-col pb-20">
+      <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 flex items-center gap-2">
-            <Search className="text-primary" />
-            Recherche d'écritures
+          <h1 className="text-5xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+             <div className="p-3 bg-slate-900 rounded-2xl text-white shadow-xl">
+                <Search size={32} />
+             </div>
+             Recherche Universelle
           </h1>
-          <p className="text-sm text-slate-500 mt-1">Moteur de recherche multicritères des lignes comptables</p>
+          <p className="text-slate-500 font-medium mt-2 italic">Moteur multicritères haute performance pour l'audit des flux.</p>
         </div>
-        <div className="flex space-x-3">
-          <button className="px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 flex items-center space-x-2">
-            <Filter size={16} />
-            <span>Filtres</span>
-          </button>
-          <button className="px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 flex items-center space-x-2">
-            <FileDown size={16} />
-            <span>Exporter</span>
-          </button>
-          <button className="px-4 py-2 bg-primary text-white rounded-md hover:bg-indigo-700 flex items-center space-x-2 shadow-sm">
-            <Plus size={16} />
-            <span>Nouveau</span>
-          </button>
+        <div className="flex gap-4">
+           <button className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-slate-200 transition-all">
+              <Filter size={18} /> FILTRES AVANCÉS
+           </button>
+           <button className="px-6 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-indigo-700 shadow-xl transition-all">
+              <FileDown size={18} /> EXPORTER
+           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-[calc(100vh-200px)]">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-          <div className="relative w-72">
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl p-8 space-y-8">
+         <div className="relative group">
+            <Search className="absolute left-6 top-6 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={24} />
             <input 
               type="text" 
-              placeholder="Rechercher..."
-              className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Rechercher par libellé, montant, pièce ou référence..."
+              className="w-full pl-20 pr-10 py-6 bg-slate-50 border-none rounded-[2rem] font-black text-xl text-slate-900 placeholder:text-slate-300 focus:ring-4 focus:ring-indigo-500/10 shadow-inner transition-all"
             />
-            <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
-          </div>
-          <div className="text-sm text-slate-500 font-medium">
-            Prêt à configurer
-          </div>
-        </div>
-
-        <div className="flex-1 p-6">
-          <div className="max-w-3xl mx-auto w-full space-y-6">
-            <div className="bg-slate-50 p-6 rounded-lg border border-slate-100 flex items-start space-x-4">
-              <div className="p-3 bg-white rounded-full shadow-sm">
-                <Search size={24} className="text-indigo-500" />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-slate-800">Interface Standard DIAWDI 100</h3>
-                <p className="text-slate-600 mt-1 text-sm">
-                  L'infrastructure de cette page est préparée. Les grilles de données, les options de paramétrage spécifiques et l'intégration avec le Store global (Zustand) sont en place pour recevoir les fonctionnalités avancées.
-                </p>
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  <div className="border border-slate-200 rounded p-3 bg-white">
-                    <div className="text-xs text-slate-400 uppercase font-semibold">Statut Module</div>
-                    <div className="font-medium text-emerald-600 flex items-center gap-1 mt-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                      UI Générée
-                    </div>
-                  </div>
-                  <div className="border border-slate-200 rounded p-3 bg-white">
-                    <div className="text-xs text-slate-400 uppercase font-semibold">Intégration DB</div>
-                    <div className="font-medium text-amber-600 flex items-center gap-1 mt-1">
-                      <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
-                      En attente de liaison
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="absolute right-6 top-6 flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-black text-slate-400">
+               <Command size={12} /> K
             </div>
-          </div>
-        </div>
+         </div>
+
+         <div className="flex flex-wrap gap-4">
+            {['Journal', 'Période', 'Compte', 'Montant', 'Utilisateur'].map((filter, i) => (
+              <button key={i} className="px-6 py-2 bg-slate-50 hover:bg-white border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all">
+                 {filter}: TOUS
+              </button>
+            ))}
+         </div>
+      </div>
+
+      <div className="flex-1 bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden flex flex-col items-center justify-center text-center p-20 space-y-8">
+         <div className="w-40 h-40 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 relative overflow-hidden group">
+            <Zap size={80} className="relative z-10 group-hover:scale-110 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+         </div>
+         <div className="space-y-4">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Prêt pour l'indexation</h2>
+            <p className="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
+               Le moteur de recherche est configuré pour indexer vos <span className="text-indigo-600 font-black">milliers d'écritures</span> en temps réel. Saisissez un critère pour commencer l'analyse.
+            </p>
+         </div>
       </div>
     </div>
   );
