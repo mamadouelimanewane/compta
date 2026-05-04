@@ -204,6 +204,7 @@ export default function Navbar() {
                 { label: 'Deepmind Market Analyzer', path: '/innovation/market-intelligence' },
                 { label: 'Tender & Growth Accelerator', path: '/innovation/tender-accelerator' },
                 { label: 'War Room Strategic', path: '/innovation/war-room' },
+                { label: 'Manifeste Confiance', path: '/marketing/manifesto' },
               ]} 
               isInnovation={true}
             />
