@@ -216,6 +216,7 @@ export default function Navbar() {
                 { label: 'Analyse Financière', path: '/etat/analyse-financiere' },
                 { label: 'Comparatif Exercices', path: '/etat/comparatif' },
                 { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },
+                { label: 'Sceau de Diamant (Certif.)', path: '/intelligence/digital-seal' },
               ]} 
               isConfidential={true}
             />

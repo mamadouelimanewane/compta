@@ -40,6 +40,7 @@ import TrustScoring from './pages/innovation/TrustScoring';
 import MarketIntelligence from './pages/innovation/MarketIntelligence';
 import TenderAccelerator from './pages/innovation/TenderAccelerator';
 import AuditIntegrite from './pages/admin/AuditIntegrite';
+import DigitalSeal from './pages/intelligence/DigitalSeal';
 import Immobilisations from './pages/structure/Immobilisations';
 import SecurityHub from './pages/admin/SecurityHub';
 import UEMOACompliance from './pages/uemoa/UEMOACompliance';
@@ -151,6 +152,7 @@ function App() {
           <Route path="innovation/market-intelligence" element={<MarketIntelligence />} />
           <Route path="innovation/tender-accelerator" element={<TenderAccelerator />} />
           <Route path="intelligence/audit-integrite" element={<AuditIntegrite />} />
+          <Route path="intelligence/digital-seal" element={<DigitalSeal />} />
 
           {/* Administration */}
           <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />
