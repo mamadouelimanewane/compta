@@ -4,6 +4,7 @@ import {
   ArrowLeft, Package, Calendar, TrendingUp 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import BrandHeader from '../../components/BrandHeader';
 
 export default function RapportInventaire() {
   const navigate = useNavigate();
@@ -17,23 +18,14 @@ export default function RapportInventaire() {
   const totalValeur = useMemo(() => inventoryData.reduce((sum, item) => sum + item.valeur, 0), []);
 
   return (
-    <div className="space-y-10 p-4 animate-in fade-in duration-700 h-full flex flex-col pb-20">
-      <div className="flex justify-between items-end">
-        <div>
-          <button 
-            onClick={() => navigate('/gestion/stocks')}
-            className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 hover:text-indigo-600 transition-colors"
-          >
-             <ArrowLeft size={14} /> Retour au Stock
-          </button>
-          <h1 className="text-5xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
-             <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-xl">
-                <FileText size={32} />
-             </div>
-             Rapport d'Inventaire Valorisé
-          </h1>
-          <p className="text-slate-500 font-medium mt-2 italic">État détaillé de la valeur du patrimoine stocké au {new Date().toLocaleDateString()}.</p>
-        </div>
+    <div className="space-y-6 p-4 animate-in fade-in duration-700 h-full flex flex-col pb-20">
+      <div className="flex justify-between items-center mb-4">
+        <button 
+          onClick={() => navigate('/gestion/stocks')}
+          className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors"
+        >
+           <ArrowLeft size={14} /> Retour au Stock
+        </button>
         <div className="flex gap-4">
            <button className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm hover:bg-slate-50">
               <Printer size={16} /> IMPRIMER
@@ -44,7 +36,10 @@ export default function RapportInventaire() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="bg-white p-12 rounded-[3rem] border border-slate-100 shadow-2xl">
+         <BrandHeader title="Rapport d'Inventaire" subtitle="Valorisation des Stocks" />
+
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl lg:col-span-2 flex justify-between items-center relative overflow-hidden">
             <div className="relative z-10">
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Valeur Totale de l'Inventaire</p>

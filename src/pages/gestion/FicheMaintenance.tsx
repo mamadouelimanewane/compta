@@ -1,39 +1,37 @@
 import { 
   ArrowLeft, Wrench, Calendar, User, 
   ShieldCheck, AlertTriangle, Clock, Save, 
-  FilePlus, ClipboardCheck 
+  FilePlus, ClipboardCheck, Printer 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import BrandHeader from '../../components/BrandHeader';
 
 export default function FicheMaintenance() {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-10 p-4 animate-in fade-in duration-700 h-full flex flex-col pb-20">
-      <div className="flex justify-between items-end">
-        <div>
-          <button 
-            onClick={() => navigate('/gestion/gmao')}
-            className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 hover:text-indigo-600 transition-colors"
-          >
-             <ArrowLeft size={14} /> Retour GMAO
-          </button>
-          <h1 className="text-5xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
-             <div className="p-3 bg-amber-500 rounded-2xl text-white shadow-xl">
-                <Wrench size={32} />
-             </div>
-             Fiche d'Intervention #INT-442
-          </h1>
-          <p className="text-slate-500 font-medium mt-2 italic">Détails techniques et rapport d'intervention sur actif critique.</p>
-        </div>
+    <div className="space-y-6 p-4 animate-in fade-in duration-700 h-full flex flex-col pb-20">
+      <div className="flex justify-between items-center mb-4">
+        <button 
+          onClick={() => navigate('/gestion/gmao')}
+          className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors"
+        >
+           <ArrowLeft size={14} /> Retour GMAO
+        </button>
         <div className="flex gap-4">
+           <button className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm">
+              <Printer size={16} /> IMPRIMER
+           </button>
            <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-black shadow-xl transition-all">
-              <Save size={18} /> ENREGISTRER LA FICHE
+              <Save size={18} /> ENREGISTRER
            </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="bg-white p-12 rounded-[3rem] border border-slate-100 shadow-2xl">
+         <BrandHeader title="Fiche d'Intervention" subtitle="GMAO & Maintenance Industrielle" />
+
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
          <div className="lg:col-span-2 space-y-8">
             <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl p-10 space-y-10">
                <section className="grid grid-cols-2 gap-10">
