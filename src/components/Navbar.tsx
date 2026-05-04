@@ -145,7 +145,9 @@ export default function Navbar() {
               label="Gestion" 
               items={[
                 { label: 'Gestion des Stocks', path: '/gestion/stocks' },
+                { label: 'Rapport d\'Inventaire', path: '/gestion/rapport-inventaire' },
                 { label: 'GMAO & Maintenance', path: '/gestion/gmao' },
+                { label: 'Fiche d\'Intervention', path: '/gestion/fiche-maintenance' },
                 { label: 'Gestion de Trésorerie', path: '/gestion/tresorerie' },
                 { label: 'Mobile Money', path: '/gestion/mobile-money' },
                 { label: 'Coûts Industriels', path: '/gestion/cout-industriel' },

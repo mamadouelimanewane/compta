@@ -45,6 +45,8 @@ import DiamondMentor from './pages/intelligence/DiamondMentor';
 import ReconciliationMobile from './pages/gestion/ReconciliationMobile';
 import Stocks from './pages/gestion/Stocks';
 import GMAO from './pages/gestion/GMAO';
+import RapportInventaire from './pages/gestion/RapportInventaire';
+import FicheMaintenance from './pages/gestion/FicheMaintenance';
 import AuditLogs from './pages/admin/AuditLogs';
 import Importer from './pages/fichier/Importer';
 import Exporter from './pages/fichier/Exporter';
@@ -131,7 +133,9 @@ function App() {
           <Route path="gestion/cout-industriel" element={<CoutIndustriel />} />
           <Route path="gestion/mobile-money" element={<ReconciliationMobile />} />
           <Route path="gestion/stocks" element={<Stocks />} />
+          <Route path="gestion/rapport-inventaire" element={<RapportInventaire />} />
           <Route path="gestion/gmao" element={<GMAO />} />
+          <Route path="gestion/fiche-maintenance" element={<FicheMaintenance />} />
 
           {/* Innovation / Intelligence */}
           <Route path="intelligence/war-room" element={<WarRoom />} />
