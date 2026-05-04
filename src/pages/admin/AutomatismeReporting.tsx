@@ -64,6 +64,31 @@ export default function AutomatismeReporting() {
          </div>
       </div>
 
+      <div className="bg-amber-50 border border-amber-200 rounded-[2.5rem] p-8 flex items-center justify-between shadow-sm">
+         <div className="flex items-center gap-6">
+            <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+               <Bell size={24} />
+            </div>
+            <div>
+               <h3 className="text-sm font-black text-amber-900 uppercase tracking-widest">Alertes SMS Critiques</h3>
+               <p className="text-xs font-bold text-amber-700/60 italic">Recevez une confirmation par SMS dès qu'un rapport de clôture est envoyé.</p>
+            </div>
+         </div>
+         <div className="flex items-center gap-4">
+            <input 
+              type="text" 
+              placeholder="+221 77 000 00 00" 
+              className="px-6 py-3 bg-white border border-amber-200 rounded-xl text-xs font-black text-slate-900 focus:ring-2 focus:ring-amber-500 w-64"
+            />
+            <div className="flex items-center gap-3 px-4 py-2 bg-amber-200/50 rounded-xl">
+               <span className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Activer SMS</span>
+               <div className="w-10 h-5 bg-amber-500 rounded-full relative cursor-pointer shadow-inner">
+                  <div className="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+
       <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl flex-1 overflow-hidden flex flex-col">
          <div className="p-8 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
             <div className="flex items-center gap-4">
