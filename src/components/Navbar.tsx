@@ -222,7 +222,7 @@ export default function Navbar() {
            </button>
         </div>
       </div>
-    </nav>
+      
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 top-[73px] bg-black/95 backdrop-blur-xl z-[90] animate-in fade-in slide-in-from-top-4 duration-300 p-8 overflow-y-auto">
