@@ -202,6 +202,7 @@ export default function Navbar() {
                 { label: 'Neural Cash Flow', path: '/innovation/neural-cash-flow' },
                 { label: 'Diamond Trust Scoring', path: '/innovation/trust-scoring' },
                 { label: 'Deepmind Market Analyzer', path: '/innovation/market-intelligence' },
+                { label: 'Tender & Growth Accelerator', path: '/innovation/tender-accelerator' },
                 { label: 'War Room Strategic', path: '/innovation/war-room' },
               ]} 
               isInnovation={true}

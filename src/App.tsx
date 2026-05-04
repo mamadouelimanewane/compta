@@ -38,6 +38,7 @@ import WarRoom from './pages/innovation/WarRoom';
 import NeuralCashFlow from './pages/innovation/NeuralCashFlow';
 import TrustScoring from './pages/innovation/TrustScoring';
 import MarketIntelligence from './pages/innovation/MarketIntelligence';
+import TenderAccelerator from './pages/innovation/TenderAccelerator';
 import AuditIntegrite from './pages/admin/AuditIntegrite';
 import Immobilisations from './pages/structure/Immobilisations';
 import SecurityHub from './pages/admin/SecurityHub';
@@ -148,6 +149,7 @@ function App() {
           <Route path="innovation/neural-cash-flow" element={<NeuralCashFlow />} />
           <Route path="innovation/trust-scoring" element={<TrustScoring />} />
           <Route path="innovation/market-intelligence" element={<MarketIntelligence />} />
+          <Route path="innovation/tender-accelerator" element={<TenderAccelerator />} />
           <Route path="intelligence/audit-integrite" element={<AuditIntegrite />} />
 
           {/* Administration */}
