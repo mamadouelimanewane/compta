@@ -19,11 +19,17 @@ export default function FicheMaintenance() {
            <ArrowLeft size={14} /> Retour GMAO
         </button>
         <div className="flex gap-4">
-           <button className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm">
+           <button 
+             onClick={() => window.print()}
+             className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm"
+           >
               <Printer size={16} /> IMPRIMER
            </button>
-           <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-black shadow-xl transition-all">
-              <Save size={18} /> ENREGISTRER
+           <button 
+             onClick={() => window.print()}
+             className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-3 hover:bg-black shadow-xl transition-all"
+           >
+              <Download size={18} /> EXPORTER (PDF)
            </button>
         </div>
       </div>

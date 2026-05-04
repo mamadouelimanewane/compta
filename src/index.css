@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 @theme {
   --color-primary: #4f46e5;
@@ -31,10 +31,35 @@
     width: 6px;
     height: 6px;
   }
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+  @media print {
+  nav, .no-print, button, .flex-none, aside {
+    display: none !important;
   }
-  ::-webkit-scrollbar-thumb {
+  
+  body {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  .bg-white {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}  ::-webkit-scrollbar-thumb {
     @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
   }
 

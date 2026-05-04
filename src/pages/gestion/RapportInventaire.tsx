@@ -27,11 +27,17 @@ export default function RapportInventaire() {
            <ArrowLeft size={14} /> Retour au Stock
         </button>
         <div className="flex gap-4">
-           <button className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm hover:bg-slate-50">
+           <button 
+             onClick={() => window.print()}
+             className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm hover:bg-slate-50"
+           >
               <Printer size={16} /> IMPRIMER
            </button>
-           <button className="px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-xl">
-              <Download size={16} /> EXPORTER (PDF/XLS)
+           <button 
+             onClick={() => window.print()}
+             className="px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-xl"
+           >
+              <Download size={16} /> EXPORTER (PDF)
            </button>
         </div>
       </div>
