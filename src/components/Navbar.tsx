@@ -138,6 +138,8 @@ export default function Navbar() {
                 { label: 'Clôture Mensuelle', path: '/traitement/cloture-mensuelle' },
                 { label: 'Fin d\'Exercice', path: '/traitement/fin-exercice' },
                 { label: 'Gestion de Trésorerie', path: '/gestion/tresorerie' },
+                { label: 'Mobile Money', path: '/gestion/mobile-money' },
+                { label: 'Saisie IA Joule', path: '/traitement/saisie-ia' },
                 { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },
                 { label: 'Coûts Industriels', path: '/gestion/cout-industriel' },
               ]} 
@@ -145,6 +147,7 @@ export default function Navbar() {
             <MenuDropdown 
               label="État" 
               items={[
+                { label: 'Tableau de Bord', path: '/intelligence/statistiques' },
                 { label: 'Balance des Comptes', path: '/etat/balance' },
                 { label: 'Grand Livre', path: '/etat/grand-livre' },
                 { label: 'Bilan', path: '/etat/bilan' },
@@ -163,6 +166,7 @@ export default function Navbar() {
                 { label: 'Personnalisation', path: '/fenetre/personnalisation' },
                 { label: 'Navigation', path: '/fenetre/navigation' },
                 { label: 'Gestion des Droits', path: '/admin/utilisateurs' },
+                { label: 'Piste d\'Audit', path: '/admin/audit-logs' },
               ]} 
             />
             <MenuDropdown 

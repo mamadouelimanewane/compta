@@ -40,6 +40,8 @@ import SecurityHub from './pages/admin/SecurityHub';
 import UEMOACompliance from './pages/uemoa/UEMOACompliance';
 import LiasseFiscale from './pages/etat/LiasseFiscale';
 import StatistiquesGlobales from './pages/intelligence/StatistiquesGlobales';
+import ReconciliationMobile from './pages/gestion/ReconciliationMobile';
+import AuditLogs from './pages/admin/AuditLogs';
 import Importer from './pages/fichier/Importer';
 import Exporter from './pages/fichier/Exporter';
 import MiseEnPage from './pages/fichier/MiseEnPage';
@@ -123,6 +125,7 @@ function App() {
           <Route path="gestion/budget" element={<Budget />} />
           <Route path="gestion/tresorerie" element={<Tresorerie />} />
           <Route path="gestion/cout-industriel" element={<CoutIndustriel />} />
+          <Route path="gestion/mobile-money" element={<ReconciliationMobile />} />
 
           {/* Innovation / Intelligence */}
           <Route path="intelligence/war-room" element={<WarRoom />} />
@@ -131,6 +134,7 @@ function App() {
           {/* Administration */}
           <Route path="admin/utilisateurs" element={<GestionUtilisateurs />} />
           <Route path="admin/security" element={<SecurityHub />} />
+          <Route path="admin/audit-logs" element={<AuditLogs />} />
 
           {/* Régional UEMOA & Fiscalité */}
           <Route path="uemoa/compliance" element={<UEMOACompliance />} />

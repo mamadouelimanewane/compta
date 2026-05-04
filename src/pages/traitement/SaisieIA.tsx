@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { Zap, BrainCircuit, CheckCircle, Trash2, ShieldCheck, Sparkles } from 'lucide-react';
+import { Zap, BrainCircuit, CheckCircle, Trash2, ShieldCheck, Sparkles, Upload, FileText, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function SaisieIA() {
@@ -8,6 +8,7 @@ export default function SaisieIA() {
   const comptes = useStore(state => state.comptes).filter(c => c.dossierId === currentDossierId);
   const journaux = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId);
   const addLigneEcriture = useStore(state => state.addLigneEcriture);
+  const addLog = useStore(state => state.addLog);
 
   const [input, setInput] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -86,35 +87,62 @@ export default function SaisieIA() {
         <p className="text-slate-500 font-medium max-w-lg mx-auto">Décrivez votre opération en langage naturel, notre IA s'occupe de la traduction comptable OHADA.</p>
       </div>
 
-      <div className="bg-white rounded-[3rem] shadow-2xl border border-slate-100 p-10 space-y-8 relative overflow-hidden">
-         <div className="absolute top-0 right-0 p-8 text-indigo-50 opacity-20">
-            <Sparkles size={120} />
-         </div>
-         
-         <div className="relative z-10 space-y-6">
-            <textarea 
-              className="w-full bg-slate-50 border-none rounded-[2rem] p-8 text-lg font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 min-h-[150px] shadow-inner"
-              placeholder="Ex: Facture de loyer de 200.000 FCFA reçue ce matin de la part de SCI Elite..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
-            <button 
-              onClick={handleAnalyze}
-              disabled={isAnalyzing || !input}
-              className="w-full py-6 bg-indigo-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
-            >
-              {isAnalyzing ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  ANALYSE NEURONALE EN COURS...
-                </>
-              ) : (
-                <>
-                  <Zap size={20} /> ANALYSER L'OPÉRATION
-                </>
-              )}
-            </button>
-         </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white rounded-[3rem] shadow-2xl border border-slate-100 p-10 space-y-8 relative overflow-hidden">
+             <div className="absolute top-0 right-0 p-8 text-indigo-50 opacity-20">
+                <Sparkles size={120} />
+             </div>
+             
+             <div className="relative z-10 space-y-6">
+                <div className="flex gap-4 mb-8">
+                   <button className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                      <FileText size={16} /> Langage Naturel
+                   </button>
+                   <button className="flex-1 py-4 bg-slate-50 text-slate-400 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-slate-100 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+                      <Upload size={16} /> Scan / PDF (OCR)
+                   </button>
+                </div>
+
+                <textarea 
+                  className="w-full bg-slate-50 border-none rounded-[2rem] p-8 text-lg font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 min-h-[150px] shadow-inner"
+                  placeholder="Ex: Facture de loyer de 200.000 FCFA reçue ce matin de la part de SCI Elite..."
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                />
+                <button 
+                  onClick={handleAnalyze}
+                  disabled={isAnalyzing || !input}
+                  className="w-full py-6 bg-indigo-600 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-indigo-100 hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="animate-spin" size={20} />
+                      ANALYSE NEURONALE EN COURS...
+                    </>
+                  ) : (
+                    <>
+                      <Zap size={20} /> ANALYSER L'OPÉRATION
+                    </>
+                  )}
+                </button>
+             </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+           <div className="bg-slate-950 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+                 <ShieldCheck size={100} />
+              </div>
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-4 flex items-center gap-2">
+                 <ShieldCheck size={14} /> Diamond Vault
+              </h3>
+              <p className="text-xs font-bold text-slate-400 leading-relaxed">
+                 Toutes vos pièces justificatives sont scellées cryptographiquement et stockées dans notre coffre-fort hautement sécurisé.
+              </p>
+           </div>
+        </div>
       </div>
 
       {prediction && (

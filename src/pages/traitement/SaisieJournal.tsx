@@ -12,6 +12,7 @@ export default function SaisieJournal() {
   
   const addLigneEcriture = useStore(state => state.addLigneEcriture);
   const deleteLigneEcriture = useStore(state => state.deleteLigneEcriture);
+  const addLog = useStore(state => state.addLog);
 
   const [selectedJournalId, setSelectedJournalId] = useState<string>(journaux[0]?.id || '');
   const [selectedMonth, setSelectedMonth] = useState<string>(format(new Date(), 'yyyy-MM'));
@@ -52,6 +53,13 @@ export default function SaisieJournal() {
       credit: parseFloat(newLine.credit) || 0,
       sectionAnalytique: newLine.sectionAnalytique,
       validee: false
+    });
+
+    addLog({
+      dossierId: currentDossierId,
+      action: 'AJOUT_ECRITURE',
+      details: `Ajout pièce ${newLine.numeroPiece} - ${newLine.libelle}`,
+      user: 'Expert-Comptable'
     });
 
     setNewLine({

@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -87,6 +87,15 @@ export interface BudgetPrevisionnel {
   repartitionMensuelle: number[];
 }
 
+export interface AuditLog {
+  id: string;
+  dossierId: string;
+  timestamp: string;
+  action: string;
+  details: string;
+  user: string;
+}
+
 interface AppState {
   currentDossierId: string | null;
   dossiers: DossierComptable[];
@@ -96,6 +105,7 @@ interface AppState {
   taxes: Taxe[];
   lignesEcriture: LigneEcriture[];
   budgets: BudgetPrevisionnel[];
+  logs: AuditLog[];
   
   setCurrentDossier: (id: string | null) => void;
   createDossier: (dossier: Omit<DossierComptable, 'id'>) => DossierComptable;
@@ -118,6 +128,7 @@ interface AppState {
   deleteLigneEcriture: (id: string) => void;
   setBudget: (budget: Omit<BudgetPrevisionnel, 'id'>) => void;
   deleteBudget: (id: string) => void;
+  addLog: (log: Omit<AuditLog, 'id' | 'timestamp'>) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -131,6 +142,7 @@ export const useStore = create<AppState>()(
       taxes: [],
       lignesEcriture: [],
       budgets: [],
+      logs: [],
 
       setCurrentDossier: (id) => set({ currentDossierId: id }),
       
@@ -217,6 +229,10 @@ export const useStore = create<AppState>()(
       }),
       deleteBudget: (id) => set(state => ({
         budgets: state.budgets.filter(b => b.id !== id)
+      })),
+
+      addLog: (l) => set(state => ({
+        logs: [{ ...l, id: uuidv4(), timestamp: new Date().toISOString() }, ...state.logs].slice(0, 1000)
       })),
     }),
     { name: 'compta-storage' }
