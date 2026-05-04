@@ -59,6 +59,7 @@ export default function Navbar() {
   const currentDossier = dossiers.find(d => d.id === currentDossierId);
 
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -69,7 +70,15 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-[100] px-8 py-4 bg-black border-b border-white/10 shadow-2xl transition-all duration-500">
       <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-12">
+        <div className="flex items-center gap-6 lg:gap-12">
+          {/* Mobile Menu Toggle */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-2 text-white hover:bg-white/10 rounded-xl"
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
           {/* Logo Elite */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-xl">
@@ -213,6 +222,35 @@ export default function Navbar() {
            </button>
         </div>
       </div>
+    </nav>
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 top-[73px] bg-black/95 backdrop-blur-xl z-[90] animate-in fade-in slide-in-from-top-4 duration-300 p-8 overflow-y-auto">
+          <div className="space-y-8 pb-20">
+            {[
+              { label: "Fichier", items: ["Nouveau", "Ouvrir", "Exporter", "Importer"] },
+              { label: "Traitement", items: ["Saisie Journal", "Lettrage", "Trésorerie", "Audit"] },
+              { label: "États", items: ["Balance", "Bilan", "Liasse Fiscale", "Analyse Financière"] },
+            ].map((section, idx) => (
+              <div key={idx} className="space-y-4">
+                <h3 className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] border-b border-white/5 pb-2">{section.label}</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  {section.items.map((item, iidx) => (
+                    <button 
+                      key={iidx}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-left text-sm font-black text-slate-300 hover:text-white transition-colors flex items-center gap-3 uppercase tracking-widest"
+                    >
+                      <ChevronRight size={14} className="text-indigo-600" />
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
