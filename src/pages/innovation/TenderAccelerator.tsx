@@ -13,7 +13,17 @@ export default function TenderAccelerator() {
   const [threshold, setThreshold] = useState(90);
   const [phoneNumber, setPhoneNumber] = useState('+221 77 XXX XX XX');
   const [isTestSent, setIsTestSent] = useState(false);
+  const [showIntentLetter, setShowIntentLetter] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   
+  const handlePrintIntent = () => {
+    setIsPrinting(true);
+    setTimeout(() => {
+      window.print();
+      setIsPrinting(false);
+    }, 1000);
+  };
+...
   const handleTestAlert = () => {
     setIsTestSent(true);
     setTimeout(() => setIsTestSent(false), 3000);
@@ -97,11 +107,114 @@ export default function TenderAccelerator() {
                              <p className="text-[10px] font-bold opacity-80">Besoin d'un partenaire avec un CA > 450M CFA.</p>
                           </div>
                        </div>
-                       <button className="px-6 py-3 bg-white text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg">
-                          TROUVER UN PARTENAIRE
+                       <button 
+                          onClick={() => setShowIntentLetter(true)}
+                          className="px-6 py-3 bg-white text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg"
+                       >
+                          GÉNÉRER LETTRE D'INTENTION
                        </button>
                     </motion.div>
                   )}
+               </div>
+            </div>
+
+            {/* Modal Lettre d'Intention */}
+            {showIntentLetter && (
+               <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[200] flex items-center justify-center p-10 no-print">
+                  <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="bg-white rounded-[3rem] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-100"
+                  >
+                     <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                           <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Générateur de Lettre d'Intention</h3>
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Accord de Groupement Momentané d'Entreprises (GME)</p>
+                        </div>
+                        <div className="flex gap-4">
+                           <button 
+                             onClick={handlePrintIntent}
+                             className="px-6 py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all flex items-center gap-2"
+                           >
+                              <Printer size={16} /> {isPrinting ? 'IMPRESSION...' : 'IMPRIMER / PDF'}
+                           </button>
+                           <button 
+                             onClick={() => setShowIntentLetter(false)}
+                             className="p-3 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 transition-all"
+                           >
+                              <X size={20} />
+                           </button>
+                        </div>
+                     </div>
+                     <div className="flex-1 overflow-y-auto p-12 bg-slate-50">
+                        <div className="bg-white p-12 shadow-xl border border-slate-100 mx-auto max-w-[800px] min-h-[1000px] font-serif text-slate-800 leading-relaxed text-sm">
+                           <div className="flex justify-between items-start mb-20">
+                              <div>
+                                 <p className="font-black text-slate-900 uppercase tracking-widest">Diawdi Intelligence Suite</p>
+                                 <p className="italic text-slate-500">Siège Social : Dakar, Sénégal</p>
+                              </div>
+                              <p className="text-slate-400 italic">Dakar, le {new Date().toLocaleDateString()}</p>
+                           </div>
+
+                           <div className="text-center mb-16">
+                              <h2 className="text-xl font-black border-b-2 border-slate-900 pb-4 inline-block uppercase tracking-[0.2em]">Lettre d'Intention de Groupement</h2>
+                           </div>
+
+                           <p className="mb-8">**Objet** : Constitution d'un Groupement Momentané d'Entreprises (GME) pour la soumission au marché : **Dossier d'Appel d'Offres n° {Math.floor(Math.random() * 10000)}**.</p>
+                           
+                           <p className="mb-6">Monsieur/Madame,</p>
+                           
+                           <p className="mb-6">
+                              Par la présente, les sociétés **Diawdi Elite Corp** et le partenaire sélectionné par notre moteur d'intelligence contractuelle, manifestent leur volonté ferme de s'associer en Groupement Momentané d'Entreprises.
+                           </p>
+
+                           <p className="mb-6">
+                              Considérant la complémentarité de nos expertises techniques et la solidité de nos capacités financières respectives, nous nous engageons à soumissionner conjointement pour le marché de : **{tenderAmount.toLocaleString()} CFA**.
+                           </p>
+
+                           <p className="mb-10">
+                              En cas d'attribution, un accord cadre de GME sera établi conformément à la réglementation en vigueur (Code des Marchés Publics de l'UEMOA).
+                           </p>
+
+                           <div className="flex justify-between mt-32 pt-10 border-t border-slate-100">
+                              <div>
+                                 <p className="text-[10px] font-black uppercase text-slate-400 mb-8">Pour Diawdi Elite Corp</p>
+                                 <div className="w-40 h-20 border border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-300 text-[10px]">CACHE ET SIGNATURE</div>
+                              </div>
+                              <div>
+                                 <p className="text-[10px] font-black uppercase text-slate-400 mb-8">Pour le Partenaire GME</p>
+                                 <div className="w-40 h-20 border border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-300 text-[10px]">CACHE ET SIGNATURE</div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </motion.div>
+               </div>
+            )}
+
+            {/* Section Imprimable cachée */}
+            <div className="hidden print:block bg-white p-12">
+               <div className="max-w-[800px] mx-auto font-serif text-slate-800 leading-relaxed text-sm">
+                  {/* (Recopie simplifiée pour le print si besoin, mais ici le modal content peut suffire si CSS print est OK) */}
+                  <div className="flex justify-between items-start mb-20">
+                     <div>
+                        <p className="font-black text-slate-900 uppercase tracking-widest">Diawdi Intelligence Suite</p>
+                        <p className="italic text-slate-500">Siège Social : Dakar, Sénégal</p>
+                     </div>
+                     <p className="text-slate-400 italic">Dakar, le {new Date().toLocaleDateString()}</p>
+                  </div>
+                  <div className="text-center mb-16">
+                     <h2 className="text-xl font-black border-b-2 border-slate-900 pb-4 inline-block uppercase tracking-[0.2em]">Lettre d'Intention de Groupement</h2>
+                  </div>
+                  <p className="mb-8 font-bold text-lg">Objet : Soumission au marché de {tenderAmount.toLocaleString()} CFA</p>
+                  <p className="mb-6 leading-loose">
+                     Les parties confirment par la présente leur engagement mutuel à collaborer stratégiquement. 
+                     L'analyse financière Diamond indique une solvabilité cumulée garantissant l'exécution optimale du contrat.
+                  </p>
+                  <div className="flex justify-between mt-40">
+                     <div className="w-48 h-24 border border-slate-200 rounded"></div>
+                     <div className="w-48 h-24 border border-slate-200 rounded"></div>
+                  </div>
                </div>
             </div>
 
