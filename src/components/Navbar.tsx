@@ -4,12 +4,14 @@ import { useStore } from '../store/useStore';
 import { 
   ShieldCheck, Search, Bell, Settings, LogOut, ChevronDown, 
   Menu, X, Sparkles, Moon, Sun, Globe, Database, Command,
-  ChevronRight
+  ChevronRight, Diamond
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function MenuDropdown({ label, items, isConfidential, isInnovation }: { label: string, items: { label: string, path: string }[], isConfidential?: boolean, isInnovation?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const timeoutRef = useRef<any>(null);
 
   const handleMouseEnter = () => {
@@ -21,33 +23,48 @@ function MenuDropdown({ label, items, isConfidential, isInnovation }: { label: s
     timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
   };
 
+  const isActive = items.some(item => location.pathname === item.path);
+
   return (
     <div 
       className="relative"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <button className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors py-2 ${isConfidential ? 'text-amber-400 hover:text-amber-300' : isInnovation ? 'text-indigo-400 hover:text-indigo-300' : 'text-white hover:text-indigo-400'}`}>
+      <button className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] transition-all py-2 relative group ${isConfidential ? 'text-amber-400 hover:text-amber-300' : isInnovation ? 'text-indigo-400 hover:text-indigo-300' : 'text-white hover:text-indigo-400'} ${isActive ? 'text-indigo-400' : ''}`}>
         {isConfidential && <ShieldCheck size={14} className="text-amber-500" />}
         {isInnovation && <Sparkles size={14} className="text-indigo-500 animate-pulse" />}
         {label}
         <ChevronDown size={12} className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} />
+        {isActive && (
+          <motion.div 
+            layoutId="diamondGlow"
+            className="absolute -bottom-1 left-0 right-0 h-[2px] bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.8)] rounded-full"
+          />
+        )}
       </button>
-      
-      {isOpen && (
-        <div className="absolute top-full left-0 w-64 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl py-4 mt-2 animate-in fade-in slide-in-from-top-2 duration-200 z-[200]">
-          {items.map((item, idx) => (
-            <button
-              key={idx}
-              onClick={() => { navigate(item.path); setIsOpen(false); }}
-              className="w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-200 hover:text-white hover:bg-white/5 transition-all flex items-center justify-between group"
-            >
-              {item.label}
-              <ChevronRight size={12} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
-            </button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute top-full left-0 w-72 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl py-4 mt-2 z-[200] overflow-hidden"
+          >
+            {items.map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => { navigate(item.path); setIsOpen(false); }}
+                className={`w-full text-left px-8 py-3.5 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-between group ${location.pathname === item.path ? 'text-white bg-white/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+              >
+                {item.label}
+                <ChevronRight size={14} className={`opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0 ${location.pathname === item.path ? 'opacity-100 translate-x-0' : ''}`} />
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -70,9 +87,10 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-[100] px-8 py-4 bg-black border-b border-white/10 shadow-2xl transition-all duration-500">
-      <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-6 lg:gap-12">
+    <nav className="bg-slate-950 text-white px-8 py-4 flex items-center justify-between border-b border-white/5 relative overflow-hidden no-print z-50">
+      {/* Scanline effect */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
+      <div className="flex items-center gap-12 relative z-10">
           {/* Mobile Menu Toggle */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -81,12 +99,20 @@ export default function Navbar() {
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          {/* Logo Elite */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-xl">
-              <ShieldCheck size={24} />
+          <div 
+            onClick={() => navigate('/')} 
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.4)] group-hover:scale-110 transition-transform duration-500">
+              <Diamond className="text-white" size={24} />
             </div>
-            <h1 className="text-xl font-black text-white tracking-tighter">DIAWDI</h1>
+            <div>
+              <span className="text-xl font-black tracking-tighter uppercase italic">Diawdi</span>
+              <div className="flex items-center gap-1">
+                 <span className="text-[8px] font-black text-indigo-400 tracking-[0.3em] uppercase">Intelligence Suite</span>
+                 <div className="w-1 h-1 bg-indigo-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
           </div>
 
           {/* Sage-Style Menu */}
@@ -259,7 +285,6 @@ export default function Navbar() {
            </button>
         </div>
       </div>
-      
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 top-[73px] bg-black/95 backdrop-blur-xl z-[90] animate-in fade-in slide-in-from-top-4 duration-300 p-8 overflow-y-auto">
