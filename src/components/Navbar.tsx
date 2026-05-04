@@ -89,7 +89,7 @@ export default function Navbar() {
                 { label: 'Configuration', path: '/parametres' },
                 { label: 'Importer', path: '/fichier/importer' },
                 { label: 'Exporter', path: '/fichier/exporter' },
-                { label: 'Communication', path: '#' },
+                { label: 'Communication', path: '/fichier/communication' },
                 { label: 'Imprimer', path: '/fichier/imprimer' },
                 { label: 'À propos de...', path: '/fichier/informations' },
               ]} 
@@ -144,14 +144,14 @@ export default function Navbar() {
             <MenuDropdown 
               label="Fenêtre" 
               items={[
-                { label: 'Personnalisation', path: '#' },
-                { label: 'Navigation', path: '#' },
+                { label: 'Personnalisation', path: '/fenetre/personnalisation' },
+                { label: 'Navigation', path: '/fenetre/navigation' },
               ]} 
             />
             <MenuDropdown 
               label="Aide" 
               items={[
-                { label: 'Aide en ligne', path: '#' },
+                { label: 'Aide en ligne', path: '/aide/en-ligne' },
               ]} 
             />
           </div>

@@ -43,6 +43,10 @@ import Exporter from './pages/fichier/Exporter';
 import MiseEnPage from './pages/fichier/MiseEnPage';
 import Imprimer from './pages/fichier/Imprimer';
 import Informations from './pages/fichier/Informations';
+import Communication from './pages/fichier/Communication';
+import Personnalisation from './pages/fenetre/Personnalisation';
+import Navigation from './pages/fenetre/Navigation';
+import AideEnLigne from './pages/aide/AideEnLigne';
 import JournalTraitement from './pages/edition/JournalTraitement';
 import Collaborateurs from './pages/structure/Collaborateurs';
 import RechercheEcritures from './pages/traitement/RechercheEcritures';
@@ -131,6 +135,13 @@ function App() {
           <Route path="fichier/mise-en-page" element={<MiseEnPage />} />
           <Route path="fichier/imprimer" element={<Imprimer />} />
           <Route path="fichier/informations" element={<Informations />} />
+          <Route path="fichier/communication" element={<Communication />} />
+          
+          {/* Fenêtre & Aide */}
+          <Route path="fenetre/personnalisation" element={<Personnalisation />} />
+          <Route path="fenetre/navigation" element={<Navigation />} />
+          <Route path="aide/en-ligne" element={<AideEnLigne />} />
+          
           <Route path="edition/journal-traitement" element={<JournalTraitement />} />
         </Route>
       </Routes>
