@@ -162,6 +162,8 @@ export default function Navbar() {
               label="Intelligence" 
               items={[
                 { label: 'Tableau de Bord', path: '/intelligence/statistiques' },
+                { label: 'Simulateur Fiscal', path: '/intelligence/simulateur-fiscal' },
+                { label: 'Diamond Mentor AI', path: '/intelligence/diamond-mentor' },
                 { label: 'Analyse Financière', path: '/etat/analyse-financiere' },
                 { label: 'Comparatif Exercices', path: '/etat/comparatif' },
                 { label: 'Audit & Révision', path: '/intelligence/audit-integrite' },

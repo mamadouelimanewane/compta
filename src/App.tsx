@@ -40,6 +40,8 @@ import SecurityHub from './pages/admin/SecurityHub';
 import UEMOACompliance from './pages/uemoa/UEMOACompliance';
 import LiasseFiscale from './pages/etat/LiasseFiscale';
 import StatistiquesGlobales from './pages/intelligence/StatistiquesGlobales';
+import SimulateurFiscal from './pages/intelligence/SimulateurFiscal';
+import DiamondMentor from './pages/intelligence/DiamondMentor';
 import ReconciliationMobile from './pages/gestion/ReconciliationMobile';
 import AuditLogs from './pages/admin/AuditLogs';
 import Importer from './pages/fichier/Importer';
@@ -150,6 +152,8 @@ function App() {
           
           {/* Intelligence & Analytics */}
           <Route path="intelligence/statistiques" element={<StatistiquesGlobales />} />
+          <Route path="intelligence/simulateur-fiscal" element={<SimulateurFiscal />} />
+          <Route path="intelligence/diamond-mentor" element={<DiamondMentor />} />
           
           {/* Fenêtre & Aide */}
           <Route path="fenetre/personnalisation" element={<Personnalisation />} />
