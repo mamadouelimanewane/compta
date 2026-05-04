@@ -18,6 +18,44 @@ export default function Dashboard() {
   const currentDossier = dossiers.find(d => d.id === currentDossierId);
   const journaux = useStore(state => state.journaux).filter(j => j.dossierId === currentDossierId);
   const lignes = useStore(state => state.lignesEcriture).filter(l => l.dossierId === currentDossierId);
+  const handleSimulate = () => {
+    if (!currentDossierId) return;
+    setIsSimulating(true);
+    
+    const demoEntries = [
+      { date: '2024-03-04', libelle: 'Vente Marchandises - Facture FC-882', compte: '701100', debit: 0, credit: 15000000 },
+      { date: '2024-03-04', libelle: 'Client DIAWDI - Facture FC-882', compte: '411100', debit: 15000000, credit: 0 },
+      { date: '2024-03-05', libelle: 'Achat Lubrifiant - Facture AC-12', compte: '601100', debit: 2500000, credit: 0 },
+      { date: '2024-03-05', libelle: 'Fournisseur TOTAL - Facture AC-12', compte: '401100', debit: 0, credit: 2500000 },
+      { date: '2024-03-06', libelle: 'Honoraire Conseil - Facture HC-09 (Sans Pièce)', compte: '622600', debit: 450000, credit: 0 },
+      { date: '2024-03-06', libelle: 'Fournisseur Cabinet X - Facture HC-09', compte: '401100', debit: 0, credit: 450000 },
+    ];
+
+    setTimeout(() => {
+      demoEntries.forEach(entry => {
+        addLigneEcriture({
+          dossierId: currentDossierId,
+          journalId: journaux[0]?.id || '1',
+          date: entry.date,
+          numeroPiece: 'SIM-001',
+          reference: 'SIMULATION',
+          compteGeneralId: entry.compte,
+          libelle: entry.libelle,
+          debit: entry.debit,
+          credit: entry.credit,
+          validee: true
+        });
+      });
+      addLog({
+        dossierId: currentDossierId,
+        action: 'SIMULATION_IA',
+        details: 'Injection d\'écritures simulées pour test Mentor/Fiscalité',
+        user: 'Système AI'
+      });
+      setIsSimulating(false);
+      navigate('/intelligence/statistiques');
+    }, 1500);
+  };
 
   if (!currentDossierId) return (
     <div className="h-full flex flex-col items-center justify-center p-12 bg-white rounded-[3rem] border-4 border-dashed border-slate-100 animate-in fade-in zoom-in duration-700">
